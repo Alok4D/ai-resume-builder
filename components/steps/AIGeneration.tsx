@@ -6,10 +6,9 @@ import { motion } from 'framer-motion';
 import { useSelector, useDispatch } from 'react-redux';
 import { setGeneratedResume } from '../../redux/formSlice';
 import { generateResume } from '../../app/actions/generateResume';
-import { generatePDF } from '../../lib/pdfGenerator';
 import type { RootState } from '../../redux/store';
 import { IoArrowBack, IoArrowForward } from 'react-icons/io5';
-import { Download } from 'lucide-react';
+
 
 interface Props {
     onNext: (data: any) => void;
@@ -55,11 +54,32 @@ export default function AIGeneration({ onNext, onBack }: Props) {
         }
     };
 
-    const handleDownloadPDF = async () => {
-        try {
-            await generatePDF('resume-preview', 'my-resume.pdf');
-        } catch (err) {
-            setError('Failed to download PDF');
+    const handleDownloadPDF = () => {
+        const printWindow = window.open('', '_blank');
+        if (printWindow && generatedResume) {
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Resume</title>
+                    <style>
+                        body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
+                        @media print {
+                            body { margin: 0; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    ${generatedResume}
+                    <script>
+                        window.onload = function() {
+                            window.print();
+                        }
+                    </script>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
         }
     };
 
@@ -98,48 +118,26 @@ export default function AIGeneration({ onNext, onBack }: Props) {
                     </div>
                 )}
 
-                {!generatedResume ? (
-                    <motion.button
-                        type="button"
-                        onClick={handleGenerate}
-                        disabled={isGenerating}
-                        whileHover={!isGenerating ? { scale: 1.02 } : {}}
-                        whileTap={!isGenerating ? { scale: 0.98 } : {}}
-                        className={`w-full px-6 py-4 rounded-lg font-medium text-white transition-all ${isGenerating
-                            ? 'bg-emerald-400 cursor-not-allowed'
-                            : 'bg-emerald-500 hover:bg-emerald-600'
-                            }`}
-                    >
-                        {isGenerating ? 'Generating Resume...' : 'Generate Resume with AI'}
-                    </motion.button>
-                ) : (
-                    <>
-                        <div id="resume-preview" className="bg-white p-8 border border-gray-200 rounded-lg shadow-sm max-h-96 overflow-y-auto">
-                            <div dangerouslySetInnerHTML={{ __html: generatedResume }} />
-                        </div>
+                <motion.button
+                    type="button"
+                    onClick={handleGenerate}
+                    disabled={isGenerating || !!generatedResume}
+                    whileHover={!isGenerating && !generatedResume ? { scale: 1.02 } : {}}
+                    whileTap={!isGenerating && !generatedResume ? { scale: 0.98 } : {}}
+                    className={`w-full px-6 py-4 rounded-lg font-medium text-white transition-all ${isGenerating || generatedResume
+                        ? 'bg-emerald-400 cursor-not-allowed'
+                        : 'bg-emerald-500 hover:bg-emerald-600'
+                        }`}
+                >
+                    {isGenerating ? 'Generating Resume...' : generatedResume ? '✓ Resume Generated Successfully' : 'Generate Resume with AI'}
+                </motion.button>
 
-                        <div className="flex gap-4">
-                            <motion.button
-                                type="button"
-                                onClick={handleGenerate}
-                                disabled={isGenerating}
-                                whileHover={!isGenerating ? { scale: 1.02 } : {}}
-                                whileTap={!isGenerating ? { scale: 0.98 } : {}}
-                                className="flex-1 px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors"
-                            >
-                                Regenerate
-                            </motion.button>
-                            <motion.button
-                                type="button"
-                                onClick={handleDownloadPDF}
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                                className="flex-1 px-6 py-3 bg-emerald-500 text-white rounded-lg font-medium hover:bg-emerald-600 transition-colors flex items-center justify-center gap-2"
-                            >
-                                <Download className="w-5 h-5" /> Download PDF
-                            </motion.button>
-                        </div>
-                    </>
+                {generatedResume && (
+                    <div className="p-6 bg-emerald-50 border border-emerald-200 rounded-lg text-center">
+                        <div className="text-emerald-600 text-5xl mb-3">✓</div>
+                        <h3 className="text-xl font-semibold text-emerald-900 mb-2">Resume Generated Successfully!</h3>
+                        <p className="text-emerald-700">Click "View Full Resume" below to see and download your professional resume.</p>
+                    </div>
                 )}
 
                 <div className="flex gap-4 pt-6 border-t">
@@ -151,6 +149,20 @@ export default function AIGeneration({ onNext, onBack }: Props) {
                         className="flex-1 px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors flex items-center justify-center gap-2"
                     >
                         <IoArrowBack className="w-5 h-5" /> Back
+                    </motion.button>
+                    <motion.button
+                        type="button"
+                        onClick={() => generatedResume ? onNext({ generated: true }) : null}
+                        disabled={!generatedResume}
+                        whileHover={generatedResume ? { scale: 1.02 } : {}}
+                        whileTap={generatedResume ? { scale: 0.98 } : {}}
+                        className={`flex-1 px-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 ${
+                            generatedResume 
+                                ? 'bg-emerald-500 text-white hover:bg-emerald-600' 
+                                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        }`}
+                    >
+                        View Full Resume <IoArrowForward className="w-5 h-5" />
                     </motion.button>
                 </div>
             </div>

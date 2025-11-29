@@ -10,6 +10,7 @@ import WorkExperience from '../../../components/steps/WorkExperience';
 import Certifications from '../../../components/steps/Certifications';
 import ContactInformation from '../../../components/steps/ContactInformation';
 import AIGeneration from '../../../components/steps/AIGeneration';
+import ResumePreview from '../../../components/steps/ResumePreview';
 
 interface Step {
     id: number;
@@ -69,6 +70,8 @@ export default function StepperPage() {
                 return <ContactInformation onNext={handleNext} onBack={handleBack} />;
             case 6:
                 return <AIGeneration onNext={handleNext} onBack={handleBack} />;
+            case 7:
+                return <ResumePreview onNext={handleNext} onBack={handleBack} />;
             default:
                 return null;
         }
