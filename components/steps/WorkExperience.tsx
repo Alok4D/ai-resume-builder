@@ -2,11 +2,14 @@
 
 "use client"
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { IoIosArrowForward } from "react-icons/io";
 import { IoArrowBack, IoArrowForward } from 'react-icons/io5';
+import { useDispatch, useSelector } from 'react-redux';
+import { addWorkExperience } from '../../redux/formSlice';
+import { validateWorkExperience } from '../../lib/validation';
+import type { RootState } from '../../redux/store';
 
 interface Props {
     onNext: (data: any) => void;
@@ -14,15 +17,18 @@ interface Props {
 }
 
 export default function WorkExperience({ onNext, onBack }: Props) {
+    const dispatch = useDispatch();
+    const savedData = useSelector((state: RootState) => state.form.formData.workExperience);
+    
     const [formData, setFormData] = useState({
-        jobTitle: 'Mid-Level UI/UX Designer',
-        companyName: 'SXE Technology (Belpile Group)',
+        jobTitle: '',
+        companyName: '',
         startDate: '',
         endDate: '',
-        jobDescription: 'An experienced marketing professional with over 3 years of expertise in digital marketing, specializing in SEO, social media strategies, and content creation.',
+        jobDescription: '',
     });
-
-    const [selectedSkills, setSelectedSkills] = useState<string[]>(['UI Designer', 'UX Designer', 'Figma']);
+    const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
+    const [errors, setErrors] = useState<any>({});
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -34,7 +40,20 @@ export default function WorkExperience({ onNext, onBack }: Props) {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        const validationErrors = validateWorkExperience(formData);
+        
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            return;
+        }
+        
+        setErrors({});
+        dispatch(addWorkExperience({ ...formData, skills: selectedSkills }));
         onNext({ ...formData, skills: selectedSkills });
+    };
+
+    const handleSkip = () => {
+        onNext({});
     };
 
     return (
@@ -44,7 +63,8 @@ export default function WorkExperience({ onNext, onBack }: Props) {
                     Your Work Experience & Skills
                 </h2>
                 <button
-                    onClick={handleSubmit}
+                    onClick={handleSkip}
+                    type="button"
                     className="px-4 py-2 text-[#101010] text-md bg-[#F5F5F5] rounded-md hover:text-gray-800 transition-colors flex items-center gap-1"
                 >
                     Skip <span><IoIosArrowForward /></span>
@@ -64,8 +84,10 @@ export default function WorkExperience({ onNext, onBack }: Props) {
                         name="jobTitle"
                         value={formData.jobTitle}
                         onChange={handleChange}
-                        className="w-full p-4 text-[#333333] border border-[#D4D4D4] rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200"
+                        placeholder="e.g., Senior Software Engineer"
+                        className={`w-full p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${errors.jobTitle ? 'border-red-500' : 'border-[#D4D4D4]'}`}
                     />
+                    {errors.jobTitle && <p className="text-red-500 text-sm mt-1">{errors.jobTitle}</p>}
                 </div>
 
                 <div>
@@ -76,8 +98,10 @@ export default function WorkExperience({ onNext, onBack }: Props) {
                         name="companyName"
                         value={formData.companyName}
                         onChange={handleChange}
-                        className="w-full p-4 text-[#333333] border border-[#D4D4D4] rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200"
+                        placeholder="e.g., Google Inc."
+                        className={`w-full p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${errors.companyName ? 'border-red-500' : 'border-[#D4D4D4]'}`}
                     />
+                    {errors.companyName && <p className="text-red-500 text-sm mt-1">{errors.companyName}</p>}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -90,8 +114,9 @@ export default function WorkExperience({ onNext, onBack }: Props) {
                             value={formData.startDate}
                             onChange={handleChange}
                             type="date"
-                            className="w-full p-4 text-[#333333] border border-[#D4D4D4] rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200"
+                            className={`w-full p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${errors.startDate ? 'border-red-500' : 'border-[#D4D4D4]'}`}
                         />
+                        {errors.startDate && <p className="text-red-500 text-sm mt-1">{errors.startDate}</p>}
                     </div>
                     <div>
                         <label className="block text-xl font-medium text-[#101010] mb-2">
@@ -102,8 +127,9 @@ export default function WorkExperience({ onNext, onBack }: Props) {
                             value={formData.endDate}
                             onChange={handleChange}
                             type="date"
-                            className="w-full p-4 text-[#333333] border border-[#D4D4D4] rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200"
+                            className={`w-full p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${errors.endDate ? 'border-red-500' : 'border-[#D4D4D4]'}`}
                         />
+                        {errors.endDate && <p className="text-red-500 text-sm mt-1">{errors.endDate}</p>}
                     </div>
                 </div>
 
@@ -116,8 +142,10 @@ export default function WorkExperience({ onNext, onBack }: Props) {
                         value={formData.jobDescription}
                         onChange={handleChange}
                         rows={4}
-                        className="w-full p-4 text-[#333333] border border-[#D4D4D4] rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 resize-none"
+                        placeholder="Describe your responsibilities and achievements..."
+                        className={`w-full p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 resize-none ${errors.jobDescription ? 'border-red-500' : 'border-[#D4D4D4]'}`}
                     />
+                    {errors.jobDescription && <p className="text-red-500 text-sm mt-1">{errors.jobDescription}</p>}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">

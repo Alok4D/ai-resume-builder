@@ -1,11 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
 "use client"
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { IoArrowBack } from "react-icons/io5";
 import { IoArrowForward } from "react-icons/io5";
+import { useDispatch, useSelector } from 'react-redux';
+import { setPersonalInfo } from '../../redux/formSlice';
+import { validatePersonalInfo } from '../../lib/validation';
+import type { RootState } from '../../redux/store';
 
 interface Props {
     onNext: (data: any) => void;
@@ -13,17 +18,27 @@ interface Props {
 }
 
 export default function PersonalInformation({ onNext, onBack }: Props) {
+    const dispatch = useDispatch();
+    const savedData = useSelector((state: RootState) => state.form.formData.personalInfo);
+    
     const [formData, setFormData] = useState({
-        firstName: 'Saifur',
-        lastName: 'Rahman',
-        phone: '+880 1567808747',
-        email: 'ux.saifur.info@gmail.com',
+        firstName: '',
+        lastName: '',
+        phone: '',
+        email: '',
         country: 'Bangladesh',
-        address: 'Section-06, Mirpur, Dhaka.',
-        city: 'Dhaka',
-        state: 'Dhaka',
-        zipCode: '1216'
+        address: '',
+        city: '',
+        state: '',
+        zipCode: ''
     });
+    const [errors, setErrors] = useState<any>({});
+
+    useEffect(() => {
+        if (savedData.firstName) {
+            setFormData(savedData);
+        }
+    }, [savedData]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -31,6 +46,15 @@ export default function PersonalInformation({ onNext, onBack }: Props) {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        const validationErrors = validatePersonalInfo(formData);
+        
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            return;
+        }
+        
+        setErrors({});
+        dispatch(setPersonalInfo(formData));
         onNext(formData);
     };
 
@@ -53,8 +77,9 @@ export default function PersonalInformation({ onNext, onBack }: Props) {
                             name="firstName"
                             value={formData.firstName}
                             onChange={handleChange}
-                            className="w-full p-4 text-[#333333] border border-[#D4D4D4] rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200"
+                            className={`w-full p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${errors.firstName ? 'border-red-500' : 'border-[#D4D4D4]'}`}
                         />
+                        {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>}
                     </div>
 
                     <div>
@@ -65,8 +90,9 @@ export default function PersonalInformation({ onNext, onBack }: Props) {
                             name="lastName"
                             value={formData.lastName}
                             onChange={handleChange}
-                            className="w-full p-4 text-[#333333] border border-[#D4D4D4] rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200"
+                            className={`w-full p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${errors.lastName ? 'border-red-500' : 'border-[#D4D4D4]'}`}
                         />
+                        {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>}
                     </div>
                 </div>
 
@@ -79,8 +105,9 @@ export default function PersonalInformation({ onNext, onBack }: Props) {
                             name="phone"
                             value={formData.phone}
                             onChange={handleChange}
-                            className="w-full p-4 text-[#333333] border border-[#D4D4D4] rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200"
+                            className={`w-full p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${errors.phone ? 'border-red-500' : 'border-[#D4D4D4]'}`}
                         />
+                        {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
                     </div>
 
                     <div>
@@ -92,8 +119,9 @@ export default function PersonalInformation({ onNext, onBack }: Props) {
                             type="email"
                             value={formData.email}
                             onChange={handleChange}
-                            className="w-full p-4 text-[#333333] border border-[#D4D4D4] rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200"
+                            className={`w-full p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${errors.email ? 'border-red-500' : 'border-[#D4D4D4]'}`}
                         />
+                        {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
                     </div>
                 </div>
 

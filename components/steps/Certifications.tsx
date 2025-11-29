@@ -1,10 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { IoArrowBack, IoArrowForward } from 'react-icons/io5';
+import { useDispatch, useSelector } from 'react-redux';
+import { addEducation, addCertification } from '../../redux/formSlice';
+import { validateEducation, validateCertification } from '../../lib/validation';
+import type { RootState } from '../../redux/store';
 
 interface Props {
     onNext: (data: any) => void;
@@ -12,23 +16,26 @@ interface Props {
 }
 
 export default function Certifications({ onNext, onBack }: Props) {
+    const dispatch = useDispatch();
     const [showEducation, setShowEducation] = useState(true);
 
     const [educationData, setEducationData] = useState({
         degree: '',
-        institutionName: 'Dhaka University',
-        major: 'Electronic and Communication Engineering (ECE)',
+        institutionName: '',
+        major: '',
         startDate: '',
-        endDate: '',
-        achievements: null as File | null
+        endDate: ''
     });
 
     const [certificationData, setCertificationData] = useState({
-        certificationTitle: 'High BNCC',
-        issuingOrganization: 'Dhaka University',
+        certificationTitle: '',
+        issuingOrganization: '',
         issueDate: '',
         expiryDate: ''
     });
+
+    const [educationErrors, setEducationErrors] = useState<any>({});
+    const [certificationErrors, setCertificationErrors] = useState<any>({});
 
     const handleEducationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setEducationData({ ...educationData, [e.target.name]: e.target.value });
@@ -38,14 +45,24 @@ export default function Certifications({ onNext, onBack }: Props) {
         setCertificationData({ ...certificationData, [e.target.name]: e.target.value });
     };
 
-    const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            setEducationData({ ...educationData, achievements: file });
-        }
-    };
-
     const handleSubmit = () => {
+        if (showEducation) {
+            const validationErrors = validateEducation(educationData);
+            if (Object.keys(validationErrors).length > 0) {
+                setEducationErrors(validationErrors);
+                return;
+            }
+            setEducationErrors({});
+            dispatch(addEducation(educationData));
+        } else {
+            const validationErrors = validateCertification(certificationData);
+            if (Object.keys(validationErrors).length > 0) {
+                setCertificationErrors(validationErrors);
+                return;
+            }
+            setCertificationErrors({});
+            dispatch(addCertification(certificationData));
+        }
         onNext({ education: educationData, certification: certificationData });
     };
 
@@ -92,8 +109,9 @@ export default function Certifications({ onNext, onBack }: Props) {
                             value={educationData.degree}
                             onChange={handleEducationChange}
                             placeholder="e.g., Bachelor's, Master's"
-                            className="w-full p-4 text-[#333333] border border-[#D4D4D4] rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200"
+                            className={`w-full p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${educationErrors.degree ? 'border-red-500' : 'border-[#D4D4D4]'}`}
                         />
+                        {educationErrors.degree && <p className="text-red-500 text-sm mt-1">{educationErrors.degree}</p>}
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -106,8 +124,9 @@ export default function Certifications({ onNext, onBack }: Props) {
                                 value={educationData.institutionName}
                                 onChange={handleEducationChange}
                                 placeholder="Dhaka University"
-                                className="w-full p-4 text-[#333333] border border-[#D4D4D4] rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200"
+                                className={`w-full p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${educationErrors.institutionName ? 'border-red-500' : 'border-[#D4D4D4]'}`}
                             />
+                            {educationErrors.institutionName && <p className="text-red-500 text-sm mt-1">{educationErrors.institutionName}</p>}
                         </div>
 
                         <div>
@@ -119,8 +138,9 @@ export default function Certifications({ onNext, onBack }: Props) {
                                 value={educationData.major}
                                 onChange={handleEducationChange}
                                 placeholder="Electronic and Communication Engineering (ECE)"
-                                className="w-full p-4 text-[#333333] border border-[#D4D4D4] rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200"
+                                className={`w-full p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${educationErrors.major ? 'border-red-500' : 'border-[#D4D4D4]'}`}
                             />
+                            {educationErrors.major && <p className="text-red-500 text-sm mt-1">{educationErrors.major}</p>}
                         </div>
                     </div>
 
@@ -152,37 +172,7 @@ export default function Certifications({ onNext, onBack }: Props) {
                         </div>
                     </div>
 
-                    <div>
-                        <label className="block text-xl font-medium text-[#101010] mb-2">
-                            Achievements
-                        </label>
-                        <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-emerald-500 transition-colors bg-gray-50">
-                            <input
-                                type="file"
-                                id="education-achievements"
-                                className="hidden"
-                                onChange={handleFileUpload}
-                                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-                            />
-                            <label htmlFor="education-achievements" className="cursor-pointer">
-                                <div className="flex flex-col items-center gap-3">
-                                    <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                                    </svg>
-                                    <div>
-                                        <p className="text-base text-gray-700 font-medium mb-1">Drop file or browse</p>
-                                        <p className="text-sm text-gray-400">Format: .jpeg, .png & Max file size: 25 MB</p>
-                                    </div>
-                                    <button
-                                        type="button"
-                                        className="mt-2 px-6 py-2 bg-gray-500 text-white text-sm rounded-md hover:bg-gray-600 transition-colors"
-                                    >
-                                        Browse Files
-                                    </button>
-                                </div>
-                            </label>
-                        </div>
-                    </div>
+
 
                     <motion.button
                         type="button"
@@ -204,9 +194,10 @@ export default function Certifications({ onNext, onBack }: Props) {
                             name="certificationTitle"
                             value={certificationData.certificationTitle}
                             onChange={handleCertificationChange}
-                            placeholder="High BNCC"
-                            className="w-full p-4 text-[#333333] border border-[#D4D4D4] rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200"
+                            placeholder="e.g., AWS Certified Solutions Architect"
+                            className={`w-full p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${certificationErrors.certificationTitle ? 'border-red-500' : 'border-[#D4D4D4]'}`}
                         />
+                        {certificationErrors.certificationTitle && <p className="text-red-500 text-sm mt-1">{certificationErrors.certificationTitle}</p>}
                     </div>
 
                     <div>
@@ -217,9 +208,10 @@ export default function Certifications({ onNext, onBack }: Props) {
                             name="issuingOrganization"
                             value={certificationData.issuingOrganization}
                             onChange={handleCertificationChange}
-                            placeholder="Dhaka University"
-                            className="w-full p-4 text-[#333333] border border-[#D4D4D4] rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200"
+                            placeholder="e.g., Amazon Web Services"
+                            className={`w-full p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${certificationErrors.issuingOrganization ? 'border-red-500' : 'border-[#D4D4D4]'}`}
                         />
+                        {certificationErrors.issuingOrganization && <p className="text-red-500 text-sm mt-1">{certificationErrors.issuingOrganization}</p>}
                     </div>
 
                     <div>

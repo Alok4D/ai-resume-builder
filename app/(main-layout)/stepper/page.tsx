@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
-import  { useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check } from 'lucide-react';
 import PersonalInformation from '../../../components/steps/PersonalInformation';
@@ -75,7 +75,7 @@ export default function StepperPage() {
     };
 
     return (
-        <div className="min-h-screen py-8 px-4 border-2">
+        <div className="min-h-screen py-8 px-4">
             <div>
                 {/* Progress Bar */}
                 <div className="mb-12">

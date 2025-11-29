@@ -1,11 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { FiChevronDown } from "react-icons/fi";
 import { IoArrowBack, IoArrowForward } from 'react-icons/io5';
+import { useDispatch, useSelector } from 'react-redux';
+import { setCareerSummary } from '../../redux/formSlice';
+import { validateCareerSummary } from '../../lib/validation';
+import type { RootState } from '../../redux/store';
 
 interface Props {
     onNext: (data: any) => void;
@@ -13,10 +17,20 @@ interface Props {
 }
 
 export default function CareerSummary({ onNext, onBack }: Props) {
+    const dispatch = useDispatch();
+    const savedData = useSelector((state: RootState) => state.form.formData.careerSummary);
+    
     const [formData, setFormData] = useState({
         jobTitle: '',
-        summary: 'An experienced marketing professional with over 5 years of expertise in digital marketing, specializing in SEO, social media strategies, and content creation.'
+        summary: ''
     });
+    const [errors, setErrors] = useState<any>({});
+
+    useEffect(() => {
+        if (savedData.jobTitle) {
+            setFormData(savedData);
+        }
+    }, [savedData]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -24,6 +38,15 @@ export default function CareerSummary({ onNext, onBack }: Props) {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        const validationErrors = validateCareerSummary(formData);
+        
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            return;
+        }
+        
+        setErrors({});
+        dispatch(setCareerSummary(formData));
         onNext(formData);
     };
 
@@ -47,17 +70,18 @@ export default function CareerSummary({ onNext, onBack }: Props) {
       name="jobTitle"
       value={formData.jobTitle}
       onChange={handleChange}
-      className="
+      className={`
         w-full p-4 pr-12
         text-[#333333]
-        border border-[#D4D4D4]
+        border
         rounded-lg bg-[#fcfcfd]
         outline-none
         focus:ring-2 focus:ring-emerald-500
         focus:border-emerald-500
         transition-all duration-200
         appearance-none
-      "
+        ${errors.jobTitle ? 'border-red-500' : 'border-[#D4D4D4]'}
+      `}
     >
       <option value="">Select your most recent or current job title</option>
       <option value="Frontend Developer">Frontend Developer</option>
@@ -76,6 +100,7 @@ export default function CareerSummary({ onNext, onBack }: Props) {
       size={22}
     />
   </div>
+  {errors.jobTitle && <p className="text-red-500 text-sm mt-1">{errors.jobTitle}</p>}
 </div>
 
                 <div>
@@ -87,8 +112,10 @@ export default function CareerSummary({ onNext, onBack }: Props) {
                         value={formData.summary}
                         onChange={handleChange}
                         rows={6}
-                        className="w-full p-4 text-[#333333] border border-[#D4D4D4] rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 resize-none"
+                        placeholder="Write a brief summary of your career..."
+                        className={`w-full p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 resize-none ${errors.summary ? 'border-red-500' : 'border-[#D4D4D4]'}`}
                     />
+                    {errors.summary && <p className="text-red-500 text-sm mt-1">{errors.summary}</p>}
                 </div>
 
                 <div className="flex gap-4 pt-6">

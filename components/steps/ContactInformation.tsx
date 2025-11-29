@@ -1,11 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { FiChevronDown } from "react-icons/fi";
 import { IoArrowBack, IoArrowForward } from 'react-icons/io5';
+import { useDispatch, useSelector } from 'react-redux';
+import { setContactInfo } from '../../redux/formSlice';
+import { validateContactInfo } from '../../lib/validation';
+import type { RootState } from '../../redux/store';
 
 interface Props {
     onNext: (data: any) => void;
@@ -13,18 +17,37 @@ interface Props {
 }
 
 export default function ContactInformation({ onNext, onBack }: Props) {
+    const dispatch = useDispatch();
+    const savedData = useSelector((state: RootState) => state.form.formData.contactInfo);
+    
     const [formData, setFormData] = useState({
         linkedinProfile: '',
         personalWebsite: '',
         otherSocialMedia: 'Facebook',
         otherSocialMediaURL: ''
     });
+    const [errors, setErrors] = useState<any>({});
+
+    useEffect(() => {
+        if (savedData.linkedinProfile) {
+            setFormData(savedData);
+        }
+    }, [savedData]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
     const handleSubmit = () => {
+        const validationErrors = validateContactInfo(formData);
+        
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            return;
+        }
+        
+        setErrors({});
+        dispatch(setContactInfo(formData));
         onNext(formData);
     };
 
@@ -50,9 +73,10 @@ export default function ContactInformation({ onNext, onBack }: Props) {
                         name="linkedinProfile"
                         value={formData.linkedinProfile}
                         onChange={handleChange}
-                        placeholder="Enter your LinkedIn profile URL"
-                        className="w-full p-4 text-[#333333] border border-[#D4D4D4] rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200"
+                        placeholder="https://linkedin.com/in/yourprofile"
+                        className={`w-full p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${errors.linkedinProfile ? 'border-red-500' : 'border-[#D4D4D4]'}`}
                     />
+                    {errors.linkedinProfile && <p className="text-red-500 text-sm mt-1">{errors.linkedinProfile}</p>}
                 </div>
 
                 <div>
@@ -63,9 +87,10 @@ export default function ContactInformation({ onNext, onBack }: Props) {
                         name="personalWebsite"
                         value={formData.personalWebsite}
                         onChange={handleChange}
-                        placeholder="Enter your personal website or portfolio URL"
-                        className="w-full p-4 text-[#333333] border border-[#D4D4D4] rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200"
+                        placeholder="https://yourwebsite.com"
+                        className={`w-full p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${errors.personalWebsite ? 'border-red-500' : 'border-[#D4D4D4]'}`}
                     />
+                    {errors.personalWebsite && <p className="text-red-500 text-sm mt-1">{errors.personalWebsite}</p>}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -118,9 +143,10 @@ export default function ContactInformation({ onNext, onBack }: Props) {
                             name="otherSocialMediaURL"
                             value={formData.otherSocialMediaURL}
                             onChange={handleChange}
-                            placeholder="Enter other social media profile (optional)"
-                            className="w-full p-4 text-[#333333] border border-[#D4D4D4] rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200"
+                            placeholder="https://..."
+                            className={`w-full p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${errors.otherSocialMediaURL ? 'border-red-500' : 'border-[#D4D4D4]'}`}
                         />
+                        {errors.otherSocialMediaURL && <p className="text-red-500 text-sm mt-1">{errors.otherSocialMediaURL}</p>}
                     </div>
                 </div>
             </div>
