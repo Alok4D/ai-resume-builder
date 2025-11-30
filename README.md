@@ -1,4 +1,4 @@
-# 🤖 AI Resume Builder
+#  AI Resume Builder
 
 <div align="center">
   <h3>🚀 Smart AI-Powered Resume Generator</h3>
@@ -18,6 +18,7 @@
 **AI Resume Builder** is an intelligent, user-friendly web application that transforms the traditional resume creation process through artificial intelligence. Built with cutting-edge technologies, this application guides users through a seamless 7-step process to create professional, ATS-friendly resumes powered by Google's Gemini AI.
 
 ### 🎯 **Key Highlights:**
+
 - ✨ **AI-Driven Content Generation** - Smart resume creation using Google Gemini
 - 🎨 **Modern UI/UX** - Responsive design with smooth animations
 - 💾 **Persistent Data** - Never lose your progress with Redux Persist
@@ -26,9 +27,10 @@
 - ⚡ **Real-time Validation** - Instant feedback and error handling
 
 ### 🌟 **Live Application:**
+
 🔗 **[https://smart-ai-resume-builder-ivory.vercel.app/](https://smart-ai-resume-builder-ivory.vercel.app/)**
 
-## 🚀 Features
+##  Features
 
 - **Multi-Step Form**: Intuitive step-by-step resume creation process
 - **AI-Powered Generation**: Uses Google Gemini AI to generate professional resumes
@@ -38,7 +40,7 @@
 - **Responsive Design**: Mobile-friendly interface with Tailwind CSS
 - **Theme System**: Centralized color management for easy customization
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 - **Framework**: Next.js 16 (App Router)
 - **Language**: TypeScript
@@ -68,6 +70,66 @@
 - **Smooth Transitions**: Page transitions and micro-animations
 - **Professional UI**: Clean, modern interface following design best practices
 
+## 🎯 Key Implementation Details
+
+### State Management
+
+- **Redux Toolkit** for efficient state management
+- **Redux Persist** for data persistence across browser sessions
+- Centralized form state with proper TypeScript interfaces
+
+### AI Integration
+
+- **Server Actions** for secure API calls
+- **Google Gemini** model for intelligent resume generation
+- Error handling and loading states
+
+### Theme System
+
+- Centralized color management in `lib/theme.ts`
+- Easy color scheme changes (as requested in requirements)
+- Consistent styling across all components
+
+### Form Handling
+
+- **React Hook Form** for efficient form management
+- Real-time validation with custom error messages
+- Dynamic form sections with add/edit/remove functionality
+
+## 📱 Responsive Design
+
+The application is fully responsive and works seamlessly across:
+
+- Desktop computers
+- Tablets
+- Mobile devices
+
+## ✅ Completed Tasks
+
+- Multi-step form implementation with 7 distinct steps
+- Redux state management with persistence
+- AI resume generation using Gemini API
+- PDF download functionality
+- Responsive design with Tailwind CSS
+- Smooth animations with Framer Motion
+- Form validation and error handling
+- Theme system for easy color customization
+
+## 🌟 Project Showcase
+
+### 📸 Screenshots & Demo
+
+- 🎥 **Live Demo**: [Visit Application](./assets/images/image.png)
+- 📱 **Mobile Responsive**: Fully optimized for all screen sizes
+- 🎨 **Modern Design**: Clean, professional interface
+
+### 🚀 Performance Metrics
+
+- ⚡ **Fast Loading** - Optimized bundle size
+- 🔒 **Secure** - Server-side API calls
+- 📊 **SEO Friendly** - Next.js App Router
+- 🎯 **User Friendly** - Intuitive navigation
+
 ## 🔧 Installation & Setup
 
 1. **Clone the repository**
@@ -82,7 +144,7 @@
    ```
 
 3. **Set up environment variables**
-   Create a `.env.local` file in the root directory:
+   Create a `.env.local` file:
    ```env
    GEMINI_API_KEY=your_gemini_api_key_here
    ```
@@ -92,124 +154,11 @@
    npm run dev
    ```
 
-5. **Open your browser**
-   Navigate to [http://localhost:3000](http://localhost:3000)
+## 📞 Contact & Support
 
-## 🎯 Key Implementation Details
-
-### State Management
-- **Redux Toolkit** for efficient state management
-- **Redux Persist** for data persistence across browser sessions
-- Centralized form state with proper TypeScript interfaces
-
-### AI Integration
-- **Server Actions** for secure API calls
-- **Google Gemini** model for intelligent resume generation
-- Error handling and loading states
-
-### Theme System
-- Centralized color management in `lib/theme.ts`
-- Easy color scheme changes (as requested in requirements)
-- Consistent styling across all components
-
-### Form Handling
-- **React Hook Form** for efficient form management
-- Real-time validation with custom error messages
-- Dynamic form sections with add/edit/remove functionality
-
-## 📱 Responsive Design
-
-The application is fully responsive and works seamlessly across:
-- Desktop computers
-- Tablets
-- Mobile devices
-
-## 🔄 Development Workflow
-
-### Scrum Update Style Notes:
-
-**Sprint Completion Summary:**
-
-✅ **Completed Tasks:**
-- Multi-step form implementation with 7 distinct steps
-- Redux state management with persistence
-- AI resume generation using Gemini API
-- PDF download functionality
-- Responsive design with Tailwind CSS
-- Smooth animations with Framer Motion
-- Form validation and error handling
-- Theme system for easy color customization
-
-✅ **Technical Achievements:**
-- Server Actions implementation for AI integration
-- Dynamic form sections with CRUD operations
-- Stepper component for navigation
-- PDF generation with html2canvas and jsPDF
-- TypeScript interfaces for type safety
-- Redux Toolkit with proper middleware configuration
-
-✅ **UI/UX Enhancements:**
-- Professional design matching requirements
-- Smooth page transitions
-- Loading states and error handling
-- Mobile-responsive layout
-- Intuitive navigation flow
-
-## 🚀 Deployment
-
-The application is ready for deployment on platforms like:
-- Vercel (recommended for Next.js)
-- Netlify
-- AWS Amplify
-
-## 🎨 Color Customization
-
-To change the entire color scheme quickly (as per requirements), simply update the values in `lib/theme.ts`:
-
-```typescript
-export const theme = {
-  colors: {
-    primary: '#YOUR_PRIMARY_COLOR',
-    secondary: '#YOUR_SECONDARY_COLOR',
-    // ... other colors
-  }
-}
-```
-
-## 🌟 Project Showcase
-
-### 📸 **Screenshots & Demo**
-- 🎥 **Live Demo**: [https://smart-ai-resume-builder-ivory.vercel.app/](https://smart-ai-resume-builder-ivory.vercel.app/)
-- 📱 **Mobile Responsive**: Fully optimized for all screen sizes
-- 🎨 **Modern Design**: Clean, professional interface
-- ⚡ **Fast Performance**: Optimized for speed and efficiency
-
-### 🏆 **Project Achievements**
-- ✅ **100% Responsive Design** - Works on all devices
-- ✅ **AI Integration** - Google Gemini API implementation
-- ✅ **State Management** - Redux Toolkit with persistence
-- ✅ **Form Validation** - Real-time error handling
-- ✅ **PDF Generation** - Professional resume export
-- ✅ **Smooth Animations** - Framer Motion integration
-- ✅ **TypeScript** - Full type safety
-
-### 🚀 **Performance Metrics**
-- ⚡ **Fast Loading** - Optimized bundle size
-- 🔒 **Secure** - Server-side API calls
-- 📊 **SEO Friendly** - Next.js App Router
-- 🎯 **User Friendly** - Intuitive navigation
-
-## 🤝 **Contributing**
-
-Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](../../issues).
-
-## 📞 **Contact & Support**
-
-For any questions or support, please visit the [live application](https://smart-ai-resume-builder-ivory.vercel.app/) or create an issue in this repository.
-
-## 📄 **License**
-
-This project is built as a technical assessment and demonstrates modern React/Next.js development practices with AI integration.
+- 🌐 **Portfolio**: [https://alok-roy-dev.vercel.app/](https://alok-roy-dev.vercel.app/)
+- 📧 **Email**: alokroy602701@gmail.com
+- 📱 **Phone**: +880 1719277951
 
 ---
 
