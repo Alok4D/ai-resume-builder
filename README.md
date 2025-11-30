@@ -119,7 +119,9 @@ The application is fully responsive and works seamlessly across:
 
 ### 📸 Screenshots & Demo
 
-- 🎥 **Live Demo**: [Visit Application](./assets/images/image.png)
+## 📸 Screenshots
+
+![Homepage](assets/images/image.png)
 - 📱 **Mobile Responsive**: Fully optimized for all screen sizes
 - 🎨 **Modern Design**: Clean, professional interface
 
