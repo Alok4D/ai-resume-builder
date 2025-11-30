@@ -6,6 +6,8 @@ import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
 import { IoArrowBack, IoArrowForward } from "react-icons/io5";
 import Image from "next/image";
+import { useDispatch } from 'react-redux';
+import { addEducation, addCertification } from '../../redux/formSlice';
 
 interface Props {
   onNext: (data: any) => void;
@@ -29,6 +31,7 @@ type CertificationForm = {
 };
 
 export default function Certifications({ onNext, onBack }: Props) {
+  const dispatch = useDispatch();
   const [showEducation, setShowEducation] = useState(true);
   const [isDragging, setIsDragging] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
@@ -83,11 +86,14 @@ export default function Certifications({ onNext, onBack }: Props) {
   };
 
   const onSubmit = (data: any) => {
-    const storageData = {
-      ...data,
-      education: { ...data.education, achievementsPreview: preview },
-    };
-    localStorage.setItem("educationAndCertificationData", JSON.stringify(storageData));
+    // Save to Redux
+    if (data.education) {
+      const { achievements, ...educationData } = data.education;
+      dispatch(addEducation(educationData));
+    }
+    if (data.certification) {
+      dispatch(addCertification(data.certification));
+    }
     onNext(data);
   };
 
