@@ -3,7 +3,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { FiChevronDown } from "react-icons/fi";
 import { IoArrowBack, IoArrowForward } from 'react-icons/io5';
 import { useDispatch, useSelector } from 'react-redux';
@@ -40,82 +39,83 @@ export default function ContactInformation({ onNext, onBack }: Props) {
 
     const handleSubmit = () => {
         const validationErrors = validateContactInfo(formData);
-        
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
             return;
         }
-        
         setErrors({});
         dispatch(setContactInfo(formData));
         onNext(formData);
     };
 
     return (
-        <div className="py-8 px-24">
-            <div className="flex justify-between items-center mb-6">
-                <h2 className="text-5xl font-semibold text-[#333333] mb-2">
+        <div className="py-8 px-4 sm:px-6 md:px-16 lg:px-24">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-[#333333]">
                     Your Contact Information
                 </h2>
-
             </div>
 
-            <p className="text-[#777777] text-lg mb-8">
+            <p className="text-[#777777] text-base sm:text-lg mb-8">
                 Include additional contact details and social media links to showcase your professional presence.
             </p>
 
             <div className="space-y-6">
+                {/* LinkedIn */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm sm:text-base font-medium text-gray-700 mb-2">
                         LinkedIn Profile
                     </label>
                     <input
                         name="linkedinProfile"
                         value={formData.linkedinProfile}
                         onChange={handleChange}
-                        placeholder="https://linkedin.com/in/yourprofile"
-                        className={`w-full p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${errors.linkedinProfile ? 'border-red-500' : 'border-[#D4D4D4]'}`}
+                        className={`w-full p-3 sm:p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${
+                            errors.linkedinProfile ? 'border-red-500' : 'border-[#D4D4D4]'
+                        }`}
                     />
                     {errors.linkedinProfile && <p className="text-red-500 text-sm mt-1">{errors.linkedinProfile}</p>}
                 </div>
 
+                {/* Personal Website */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm sm:text-base font-medium text-gray-700 mb-2">
                         Personal Website/Portfolio
                     </label>
                     <input
                         name="personalWebsite"
                         value={formData.personalWebsite}
                         onChange={handleChange}
-                        placeholder="https://yourwebsite.com"
-                        className={`w-full p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${errors.personalWebsite ? 'border-red-500' : 'border-[#D4D4D4]'}`}
+                        className={`w-full p-3 sm:p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${
+                            errors.personalWebsite ? 'border-red-500' : 'border-[#D4D4D4]'
+                        }`}
                     />
                     {errors.personalWebsite && <p className="text-red-500 text-sm mt-1">{errors.personalWebsite}</p>}
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                {/* Other Social Media */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="relative">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm sm:text-base font-medium text-gray-700 mb-2">
                             Other Social Media
                         </label>
-
                         <div className="relative">
                             <select
                                 name="otherSocialMedia"
                                 value={formData.otherSocialMedia}
                                 onChange={handleChange}
                                 className="
-        w-full p-4 pr-12
-        text-[#333333]
-        border border-[#D4D4D4]
-        rounded-lg bg-[#fcfcfd]
-        outline-none
-        focus:ring-2 focus:ring-emerald-500
-        focus:border-emerald-500
-        transition-all duration-200
-        appearance-none
-        bg-white
-      "
+                                    w-full p-3 sm:p-4 pr-12
+                                    text-[#333333]
+                                    border border-[#D4D4D4]
+                                    rounded-lg bg-[#fcfcfd]
+                                    outline-none
+                                    focus:ring-2 focus:ring-emerald-500
+                                    focus:border-emerald-500
+                                    transition-all duration-200
+                                    appearance-none
+                                    bg-white
+                                "
                             >
                                 <option value="Facebook">Facebook</option>
                                 <option value="Twitter">Twitter</option>
@@ -124,34 +124,32 @@ export default function ContactInformation({ onNext, onBack }: Props) {
                                 <option value="Behance">Behance</option>
                                 <option value="Dribbble">Dribbble</option>
                             </select>
-
-                            {/* Dropdown Icon */}
                             <FiChevronDown
-                                className="
-        absolute right-4 top-1/2 -translate-y-1/2
-        text-gray-500 pointer-events-none
-      "
+                                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
                                 size={20}
                             />
                         </div>
                     </div>
+
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm sm:text-base font-medium text-gray-700 mb-2">
                             URL
                         </label>
                         <input
                             name="otherSocialMediaURL"
                             value={formData.otherSocialMediaURL}
                             onChange={handleChange}
-                            placeholder="https://..."
-                            className={`w-full p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${errors.otherSocialMediaURL ? 'border-red-500' : 'border-[#D4D4D4]'}`}
+                            className={`w-full p-3 sm:p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${
+                                errors.otherSocialMediaURL ? 'border-red-500' : 'border-[#D4D4D4]'
+                            }`}
                         />
                         {errors.otherSocialMediaURL && <p className="text-red-500 text-sm mt-1">{errors.otherSocialMediaURL}</p>}
                     </div>
                 </div>
             </div>
 
-            <div className="flex gap-4 pt-6 mt-8">
+            {/* Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 pt-6 mt-8">
                 <motion.button
                     type="button"
                     onClick={onBack}
