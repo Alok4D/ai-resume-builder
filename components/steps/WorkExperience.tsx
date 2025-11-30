@@ -62,6 +62,13 @@ export default function WorkExperience({ onNext, onBack }: Props) {
         e.preventDefault();
         const validationErrors = validateWorkExperience(formData);
 
+        // Require all fields
+        Object.keys(formData).forEach(key => {
+            if (!formData[key as keyof typeof formData]) {
+                validationErrors[key] = "This field is required";
+            }
+        });
+
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
             return;
@@ -77,9 +84,9 @@ export default function WorkExperience({ onNext, onBack }: Props) {
     };
 
     return (
-        <div className="py-8 px-24">
-            <div className="flex justify-between items-center mb-6">
-                <h2 className="text-5xl font-semibold text-[#333333] mb-2">
+        <div className="py-8 px-4 sm:px-6 md:px-16 lg:px-24">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold text-[#333333]">
                     Your Work Experience & Skills
                 </h2>
                 <button
@@ -91,14 +98,14 @@ export default function WorkExperience({ onNext, onBack }: Props) {
                 </button>
             </div>
 
-            <p className="text-[#777777] text-lg mb-8">
+            <p className="text-[#777777] text-base sm:text-lg mb-8">
                 Highlight your work experience and skills. The more detail you provide, the better the AI can tailor your resume to match job opportunities.
             </p>
 
             <form className="space-y-6" onSubmit={handleSubmit}>
                 {/* Job Title */}
                 <div>
-                    <label className="block text-xl font-medium text-[#101010] mb-2">
+                    <label className="block text-lg sm:text-xl font-medium text-[#101010] mb-2">
                         Job Title
                     </label>
                     <input
@@ -106,14 +113,15 @@ export default function WorkExperience({ onNext, onBack }: Props) {
                         value={formData.jobTitle}
                         onChange={handleChange}
                         placeholder="e.g., Senior Software Engineer"
-                        className={`w-full p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${errors.jobTitle ? 'border-red-500' : 'border-[#D4D4D4]'}`}
+                        className={`w-full p-3 sm:p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${errors.jobTitle ? 'border-red-500' : 'border-[#D4D4D4]'}`}
+                        required
                     />
                     {errors.jobTitle && <p className="text-red-500 text-sm mt-1">{errors.jobTitle}</p>}
                 </div>
 
                 {/* Company Name */}
                 <div>
-                    <label className="block text-xl font-medium text-[#101010] mb-2">
+                    <label className="block text-lg sm:text-xl font-medium text-[#101010] mb-2">
                         Company Name
                     </label>
                     <input
@@ -121,32 +129,35 @@ export default function WorkExperience({ onNext, onBack }: Props) {
                         value={formData.companyName}
                         onChange={handleChange}
                         placeholder="e.g., Google Inc."
-                        className={`w-full p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${errors.companyName ? 'border-red-500' : 'border-[#D4D4D4]'}`}
+                        className={`w-full p-3 sm:p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${errors.companyName ? 'border-red-500' : 'border-[#D4D4D4]'}`}
+                        required
                     />
                     {errors.companyName && <p className="text-red-500 text-sm mt-1">{errors.companyName}</p>}
                 </div>
 
                 {/* Dates */}
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label className="block text-xl font-medium text-[#101010] mb-2">Start Date</label>
+                        <label className="block text-lg sm:text-xl font-medium text-[#101010] mb-2">Start Date</label>
                         <input
                             name="startDate"
                             value={formData.startDate}
                             onChange={handleChange}
                             type="date"
-                            className={`w-full p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${errors.startDate ? 'border-red-500' : 'border-[#D4D4D4]'}`}
+                            className={`w-full p-3 sm:p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${errors.startDate ? 'border-red-500' : 'border-[#D4D4D4]'}`}
+                            required
                         />
                         {errors.startDate && <p className="text-red-500 text-sm mt-1">{errors.startDate}</p>}
                     </div>
                     <div>
-                        <label className="block text-xl font-medium text-[#101010] mb-2">End Date</label>
+                        <label className="block text-lg sm:text-xl font-medium text-[#101010] mb-2">End Date</label>
                         <input
                             name="endDate"
                             value={formData.endDate}
                             onChange={handleChange}
                             type="date"
-                            className={`w-full p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${errors.endDate ? 'border-red-500' : 'border-[#D4D4D4]'}`}
+                            className={`w-full p-3 sm:p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${errors.endDate ? 'border-red-500' : 'border-[#D4D4D4]'}`}
+                            required
                         />
                         {errors.endDate && <p className="text-red-500 text-sm mt-1">{errors.endDate}</p>}
                     </div>
@@ -154,23 +165,25 @@ export default function WorkExperience({ onNext, onBack }: Props) {
 
                 {/* Job Description */}
                 <div>
-                    <label className="block text-xl font-medium text-[#101010] mb-2">Job Description/Responsibilities</label>
+                    <label className="block text-lg sm:text-xl font-medium text-[#101010] mb-2">Job Description/Responsibilities</label>
                     <textarea
                         name="jobDescription"
                         value={formData.jobDescription}
                         onChange={handleChange}
                         rows={4}
                         placeholder="Describe your responsibilities and achievements..."
-                        className={`w-full p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 resize-none ${errors.jobDescription ? 'border-red-500' : 'border-[#D4D4D4]'}`}
+                        className={`w-full p-3 sm:p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 resize-none ${errors.jobDescription ? 'border-red-500' : 'border-[#D4D4D4]'}`}
+                        required
                     />
                     {errors.jobDescription && <p className="text-red-500 text-sm mt-1">{errors.jobDescription}</p>}
                 </div>
 
-                {/* Achievements */}
-                <div className="grid grid-cols-2 gap-4">
+                {/* Achievements & Skills */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Achievements */}
                     <div>
-                        <label className="block text-xl font-medium text-[#101010] mb-2">Achievements</label>
-                        <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-emerald-500 transition-colors">
+                        <label className="block text-lg sm:text-xl font-medium text-[#101010] mb-2">Achievements</label>
+                        <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 sm:p-6 text-center hover:border-emerald-500 transition-colors">
                             <input
                                 type="file"
                                 id="achievements"
@@ -196,7 +209,7 @@ export default function WorkExperience({ onNext, onBack }: Props) {
 
                     {/* Skills */}
                     <div>
-                        <label className="block text-xl font-medium text-[#101010] mb-2">Skills</label>
+                        <label className="block text-lg sm:text-xl font-medium text-[#101010] mb-2">Skills</label>
                         <div className="border border-gray-300 rounded-lg p-3 min-h-[180px]">
                             <div className="flex flex-wrap gap-2 mb-2">
                                 {selectedSkills.map((skill) => (
@@ -235,7 +248,7 @@ export default function WorkExperience({ onNext, onBack }: Props) {
                     Add Another Work Experience
                 </motion.button>
 
-                <div className="flex gap-4 pt-6">
+                <div className="flex flex-col sm:flex-row gap-4 pt-6">
                     <motion.button
                         type="button"
                         onClick={onBack}

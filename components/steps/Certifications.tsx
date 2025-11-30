@@ -8,345 +8,310 @@ import { IoArrowBack, IoArrowForward } from "react-icons/io5";
 import Image from "next/image";
 
 interface Props {
-    onNext: (data: any) => void;
-    onBack: () => void;
+  onNext: (data: any) => void;
+  onBack: () => void;
 }
 
 type EducationForm = {
-    degree: string;
-    institutionName: string;
-    major: string;
-    startDate: string;
-    endDate: string;
-    achievements: File | null;
+  degree: string;
+  institutionName: string;
+  major: string;
+  startDate: string;
+  endDate: string;
+  achievements: File | null;
 };
 
 type CertificationForm = {
-    certificationTitle: string;
-    issuingOrganization: string;
-    issueDate: string;
-    expiryDate: string;
+  certificationTitle: string;
+  issuingOrganization: string;
+  issueDate: string;
+  expiryDate: string;
 };
 
 export default function Certifications({ onNext, onBack }: Props) {
-    const [showEducation, setShowEducation] = useState(true);
-    const [isDragging, setIsDragging] = useState(false);
-    const [preview, setPreview] = useState<string | null>(null);
+  const [showEducation, setShowEducation] = useState(true);
+  const [isDragging, setIsDragging] = useState(false);
+  const [preview, setPreview] = useState<string | null>(null);
 
-    const { register, handleSubmit, setValue, watch, formState } =
-        useForm<{
-            education: EducationForm;
-            certification: CertificationForm;
-        }>({
-            defaultValues: {
-                education: {
-                    degree: "",
-                    institutionName: "Dhaka University",
-                    major: "Electronic and Communication Engineering (ECE)",
-                    startDate: "",
-                    endDate: "",
-                    achievements: null,
-                },
-                certification: {
-                    certificationTitle: "High BNCC",
-                    issuingOrganization: "Dhaka University",
-                    issueDate: "",
-                    expiryDate: "",
-                },
-            },
-        });
+  const { register, handleSubmit, setValue, watch, formState } = useForm<{
+    education: EducationForm;
+    certification: CertificationForm;
+  }>({
+    defaultValues: {
+      education: {
+        degree: "",
+        institutionName: "",
+        major: "",
+        startDate: "",
+        endDate: "",
+        achievements: null,
+      },
+      certification: {
+        certificationTitle: "",
+        issuingOrganization: "",
+        issueDate: "",
+        expiryDate: "",
+      },
+    },
+  });
 
-    const { errors } = formState;
+  const { errors } = formState;
+  const education = watch("education");
+  const certification = watch("certification");
 
-    const education = watch("education");
-    const certification = watch("certification");
+  useEffect(() => {
+    const savedData = localStorage.getItem("educationAndCertificationData");
+    if (savedData) {
+      const parsed = JSON.parse(savedData);
+      Object.keys(parsed.education || {}).forEach((key) =>
+        setValue(`education.${key}`, parsed.education[key])
+      );
+      Object.keys(parsed.certification || {}).forEach((key) =>
+        setValue(`certification.${key}`, parsed.certification[key])
+      );
+      if (parsed.education?.achievementsPreview) setPreview(parsed.education.achievementsPreview);
+    }
+  }, [setValue]);
 
-    useEffect(() => {
-        // Load saved data from localStorage
-        const savedData = localStorage.getItem("resumeData");
-        if (savedData) {
-            const parsed = JSON.parse(savedData);
-            Object.keys(parsed.education).forEach((key) =>
-                setValue(`education.${key}`, parsed.education[key])
-            );
-            Object.keys(parsed.certification).forEach((key) =>
-                setValue(`certification.${key}`, parsed.certification[key])
-            );
-            if (parsed.education.achievements) {
-                setPreview(parsed.education.achievementsPreview || null);
-            }
-        }
-    }, [setValue]);
+  const onFileDrop = (file: File) => {
+    setValue("education.achievements", file, { shouldValidate: true });
+    if (file.type.startsWith("image/")) {
+      setPreview(URL.createObjectURL(file));
+    } else {
+      setPreview(null);
+    }
+  };
 
-    const onFileDrop = (file: File) => {
-        setValue("education.achievements", file, { shouldValidate: true });
-        if (file.type.startsWith("image/")) {
-            setPreview(URL.createObjectURL(file));
-        } else {
-            setPreview(null);
-        }
+  const onSubmit = (data: any) => {
+    const storageData = {
+      ...data,
+      education: { ...data.education, achievementsPreview: preview },
     };
+    localStorage.setItem("educationAndCertificationData", JSON.stringify(storageData));
+    onNext(data);
+  };
 
-    const onSubmit = (data: any) => {
-        // Save to localStorage
-        const storageData = {
-            ...data,
-            education: {
-                ...data.education,
-                achievementsPreview: preview,
-            },
-        };
-        localStorage.setItem("educationAndCertificationData", JSON.stringify(storageData));
-        onNext(data);
-    };
+  return (
+    <form className="py-8 px-4 sm:px-6 md:px-16 lg:px-24" onSubmit={handleSubmit(onSubmit)}>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-[#333333]">
+          {showEducation ? "Your Educational Background" : "Your Certifications"}
+        </h2>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => setShowEducation(true)}
+            className={`px-4 py-2 text-sm rounded transition-colors ${
+              showEducation ? "bg-gray-900 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}
+          >
+            Education
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowEducation(false)}
+            className={`px-4 py-2 text-sm rounded transition-colors ${
+              !showEducation ? "bg-gray-900 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}
+          >
+            Certifications
+          </button>
+        </div>
+      </div>
 
-    return (
-        <form className="py-8 px-24" onSubmit={handleSubmit(onSubmit)}>
-            <div className="flex justify-between items-center mb-6">
-                <h2 className="text-5xl font-semibold text-[#333333] mb-2">
-                    {showEducation ? "Your Educational Background" : "Your Certifications"}
-                </h2>
-                <div className="flex gap-2">
-                    <button
-                        type="button"
-                        onClick={() => setShowEducation(true)}
-                        className={`px-4 py-2 text-sm rounded transition-colors ${showEducation
-                                ? "bg-gray-900 text-white"
-                                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                            }`}
-                    >
-                        Education
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => setShowEducation(false)}
-                        className={`px-4 py-2 text-sm rounded transition-colors ${!showEducation
-                                ? "bg-gray-900 text-white"
-                                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                            }`}
-                    >
-                        Certifications
-                    </button>
-                </div>
+      <p className="text-[#777777] text-base sm:text-lg mb-8">
+        Provide your academic qualifications and any relevant certifications to strengthen your resume.
+      </p>
+
+      {showEducation ? (
+        <div className="space-y-6">
+          <div>
+            <label className="block text-lg sm:text-xl font-medium text-[#101010] mb-2">Your Degree</label>
+            <input
+              {...register("education.degree", { required: true })}
+              placeholder="e.g., Bachelor's, Master's"
+              className={`w-full p-3 sm:p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${
+                errors.education?.degree ? "border-red-500" : "border-[#D4D4D4]"
+              }`}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-lg sm:text-xl font-medium text-[#101010] mb-2">Institution Name</label>
+              <input
+                {...register("education.institutionName", { required: true })}
+                className={`w-full p-3 sm:p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${
+                  errors.education?.institutionName ? "border-red-500" : "border-[#D4D4D4]"
+                }`}
+              />
             </div>
 
-            <p className="text-[#777777] text-lg mb-8">
-                Provide your academic qualifications and any relevant certifications to
-                strengthen your resume.
-            </p>
+            <div>
+              <label className="block text-lg sm:text-xl font-medium text-[#101010] mb-2">Major</label>
+              <input
+                {...register("education.major", { required: true })}
+                className={`w-full p-3 sm:p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${
+                  errors.education?.major ? "border-red-500" : "border-[#D4D4D4]"
+                }`}
+              />
+            </div>
+          </div>
 
-            {showEducation ? (
-                <div className="space-y-6">
-                    <div>
-                        <label className="block text-xl font-medium text-[#101010] mb-2">
-                            Your Degree
-                        </label>
-                        <input
-                            {...register("education.degree", { required: true })}
-                            placeholder="e.g., Bachelor's, Master's"
-                            className={`w-full p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${errors.education?.degree ? "border-red-500" : "border-[#D4D4D4]"
-                                }`}
-                        />
-                    </div>
+          <div>
+            <label className="block text-lg sm:text-xl font-medium text-[#101010] mb-2">Graduation</label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <input
+                type="date"
+                {...register("education.startDate", { required: true })}
+                className={`w-full p-3 sm:p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${
+                  errors.education?.startDate ? "border-red-500" : "border-[#D4D4D4]"
+                }`}
+              />
+              <input
+                type="date"
+                {...register("education.endDate", { required: true })}
+                className={`w-full p-3 sm:p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${
+                  errors.education?.endDate ? "border-red-500" : "border-[#D4D4D4]"
+                }`}
+              />
+            </div>
+          </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label className="block text-xl font-medium text-[#101010] mb-2">
-                                Institution Name
-                            </label>
-                            <input
-                                {...register("education.institutionName", { required: true })}
-                                placeholder="Dhaka University"
-                                className={`w-full p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${errors.education?.institutionName ? "border-red-500" : "border-[#D4D4D4]"
-                                    }`}
-                            />
-                        </div>
-
-                        <div>
-                            <label className="block text-xl font-medium text-[#101010] mb-2">
-                                Major
-                            </label>
-                            <input
-                                {...register("education.major", { required: true })}
-                                placeholder="Electronic and Communication Engineering (ECE)"
-                                className={`w-full p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${errors.education?.major ? "border-red-500" : "border-[#D4D4D4]"
-                                    }`}
-                            />
-                        </div>
-                    </div>
-
-                    <div>
-                        <label className="block text-xl font-medium text-[#101010] mb-2">
-                            Graduation
-                        </label>
-                        <div className="grid grid-cols-2 gap-4">
-                            <input
-                                type="date"
-                                {...register("education.startDate", { required: true })}
-                                className={`w-full p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${errors.education?.startDate ? "border-red-500" : "border-[#D4D4D4]"
-                                    }`}
-                            />
-                            <input
-                                type="date"
-                                {...register("education.endDate", { required: true })}
-                                className={`w-full p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${errors.education?.endDate ? "border-red-500" : "border-[#D4D4D4]"
-                                    }`}
-                            />
-                        </div>
-                    </div>
-
-                    {/* Drag and Drop */}
-                    <div
-                        className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors bg-gray-50 ${isDragging ? "border-emerald-500 bg-emerald-50" : "border-gray-300"
-                            }`}
-                        onDragOver={(e) => {
-                            e.preventDefault();
-                            setIsDragging(true);
-                        }}
-                        onDragLeave={(e) => {
-                            e.preventDefault();
-                            setIsDragging(false);
-                        }}
-                        onDrop={(e) => {
-                            e.preventDefault();
-                            setIsDragging(false);
-                            const file = e.dataTransfer.files[0];
-                            if (file) onFileDrop(file);
-                        }}
-                    >
-                        <input
-                            type="file"
-                            id="education-achievements"
-                            {...register("education.achievements", { required: true })}
-                            className="hidden"
-                            onChange={(e) => e.target.files && onFileDrop(e.target.files[0])}
-                            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-                        />
-                        <label htmlFor="education-achievements" className="cursor-pointer">
-                            <div className="flex flex-col items-center gap-3">
-                                <svg
-                                    className="w-12 h-12 text-gray-400"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                                    />
-                                </svg>
-                                <div>
-                                    <p className="text-base text-gray-700 font-medium mb-1">
-                                        Drop file or browse
-                                    </p>
-                                    <p className="text-sm text-gray-400">
-                                        Format: .pdf, .doc, .docx, .jpg, .jpeg, .png
-                                    </p>
-                                </div>
-                                <button
-                                    type="button"
-                                    onClick={() =>
-                                        document.getElementById("education-achievements")?.click()
-                                    }
-                                    className="mt-2 px-6 py-2 bg-gray-500 text-white text-sm rounded-md hover:bg-gray-600 transition-colors"
-                                >
-                                    Browse Files
-                                </button>
-                            </div>
-                        </label>
-
-                        {preview && (
-                            <div className="mt-4">
-                                <Image
-                                    src={preview}
-                                    alt="Preview"
-                                    className="max-h-40 mx-auto rounded-md"
-                                    width={100}
-                                    height={100}
-                                />
-                            </div>
-                        )}
-                        {education.achievements && !preview && (
-                            <p className="mt-2 text-gray-600">{education.achievements.name}</p>
-                        )}
-                        {errors.education?.achievements && (
-                            <p className="text-red-500 mt-1">File is required</p>
-                        )}
-                    </div>
-
+          {/* Drag and Drop */}
+          <div
+            className={`border-2 border-dashed rounded-lg p-6 sm:p-8 text-center transition-colors bg-gray-50 ${
+              isDragging ? "border-emerald-500 bg-emerald-50" : "border-gray-300"
+            }`}
+            onDragOver={(e) => {
+              e.preventDefault();
+              setIsDragging(true);
+            }}
+            onDragLeave={(e) => {
+              e.preventDefault();
+              setIsDragging(false);
+            }}
+            onDrop={(e) => {
+              e.preventDefault();
+              setIsDragging(false);
+              const file = e.dataTransfer.files[0];
+              if (file) onFileDrop(file);
+            }}
+          >
+            <input
+              type="file"
+              id="education-achievements"
+              {...register("education.achievements", { required: true })}
+              className="hidden"
+              onChange={(e) => e.target.files && onFileDrop(e.target.files[0])}
+              accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+            />
+            <label htmlFor="education-achievements" className="cursor-pointer">
+              <div className="flex flex-col items-center gap-3">
+                <svg
+                  className="w-12 h-12 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                  />
+                </svg>
+                <div>
+                  <p className="text-base text-gray-700 font-medium mb-1">Drop file or browse</p>
+                  <p className="text-sm text-gray-400">Format: .pdf, .doc, .docx, .jpg, .jpeg, .png</p>
                 </div>
-            ) : (
-                <div className="space-y-6">
-                    {/* Certifications Form */}
-                    <div>
-                        <label className="block text-xl font-medium text-[#101010] mb-2">
-                            Certification Title
-                        </label>
-                        <input
-                            {...register("certification.certificationTitle", { required: true })}
-                            placeholder="High BNCC"
-                            className={`w-full p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${errors.certification?.certificationTitle ? "border-red-500" : "border-[#D4D4D4]"
-                                }`}
-                        />
-                    </div>
+                <button
+                  type="button"
+                  onClick={() => document.getElementById("education-achievements")?.click()}
+                  className="mt-2 px-6 py-2 bg-gray-500 text-white text-sm rounded-md hover:bg-gray-600 transition-colors"
+                >
+                  Browse Files
+                </button>
+              </div>
+            </label>
 
-                    <div>
-                        <label className="block text-xl font-medium text-[#101010] mb-2">
-                            Issuing Organization
-                        </label>
-                        <input
-                            {...register("certification.issuingOrganization", { required: true })}
-                            placeholder="Dhaka University"
-                            className={`w-full p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${errors.certification?.issuingOrganization ? "border-red-500" : "border-[#D4D4D4]"
-                                }`}
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block text-xl font-medium text-[#101010] mb-2">
-                            Certificate Issue
-                        </label>
-                        <div className="grid grid-cols-2 gap-4">
-                            <input
-                                type="date"
-                                {...register("certification.issueDate", { required: true })}
-                                className={`w-full p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${errors.certification?.issueDate ? "border-red-500" : "border-[#D4D4D4]"
-                                    }`}
-                            />
-                            <input
-                                type="date"
-                                {...register("certification.expiryDate", { required: true })}
-                                className={`w-full p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${errors.certification?.expiryDate ? "border-red-500" : "border-[#D4D4D4]"
-                                    }`}
-                            />
-                        </div>
-                    </div>
-                </div>
+            {preview && (
+              <div className="mt-4">
+                <Image src={preview} alt="Preview" width={120} height={120} className="mx-auto rounded-md" />
+              </div>
             )}
+            {education.achievements && !preview && (
+              <p className="mt-2 text-gray-600">{education.achievements.name}</p>
+            )}
+            {errors.education?.achievements && <p className="text-red-500 mt-1">File is required</p>}
+          </div>
+        </div>
+      ) : (
+        <div className="space-y-6">
+          <div>
+            <label className="block text-lg sm:text-xl font-medium text-[#101010] mb-2">Certification Title</label>
+            <input
+              {...register("certification.certificationTitle", { required: true })}
+              placeholder="High BNCC"
+              className={`w-full p-3 sm:p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${
+                errors.certification?.certificationTitle ? "border-red-500" : "border-[#D4D4D4]"
+              }`}
+            />
+          </div>
 
-            <div className="flex gap-4 pt-8 mt-8 border-t border-t-[#E0E0E0]">
-                <motion.button
-                    type="button"
-                    onClick={onBack}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="flex-1 px-6 py-3 bg-gray-400 text-white rounded-lg font-semibold hover:bg-gray-500 transition-colors flex items-center justify-center gap-2"
-                >
-                    <IoArrowBack className="w-5 h-5" /> Back
-                </motion.button>
-                <motion.button
-                    type="submit"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="flex-1 px-6 py-3 bg-emerald-500 text-white rounded-lg font-semibold hover:bg-emerald-600 transition-colors flex items-center justify-center gap-2"
-                >
-                    Next <IoArrowForward className="w-5 h-5" />
-                </motion.button>
+          <div>
+            <label className="block text-lg sm:text-xl font-medium text-[#101010] mb-2">Issuing Organization</label>
+            <input
+              {...register("certification.issuingOrganization", { required: true })}
+              className={`w-full p-3 sm:p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${
+                errors.certification?.issuingOrganization ? "border-red-500" : "border-[#D4D4D4]"
+              }`}
+            />
+          </div>
+
+          <div>
+            <label className="block text-lg sm:text-xl font-medium text-[#101010] mb-2">Certificate Issue</label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <input
+                type="date"
+                {...register("certification.issueDate", { required: true })}
+                className={`w-full p-3 sm:p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${
+                  errors.certification?.issueDate ? "border-red-500" : "border-[#D4D4D4]"
+                }`}
+              />
+              <input
+                type="date"
+                {...register("certification.expiryDate", { required: true })}
+                className={`w-full p-3 sm:p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${
+                  errors.certification?.expiryDate ? "border-red-500" : "border-[#D4D4D4]"
+                }`}
+              />
             </div>
-        </form>
-    );
+          </div>
+        </div>
+      )}
+
+      <div className="flex flex-col sm:flex-row gap-4 pt-8 mt-8 border-t border-t-[#E0E0E0]">
+        <motion.button
+          type="button"
+          onClick={onBack}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="flex-1 px-6 py-3 bg-gray-400 text-white rounded-lg font-semibold hover:bg-gray-500 transition-colors flex items-center justify-center gap-2"
+        >
+          <IoArrowBack className="w-5 h-5" /> Back
+        </motion.button>
+        <motion.button
+          type="submit"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="flex-1 px-6 py-3 bg-emerald-500 text-white rounded-lg font-semibold hover:bg-emerald-600 transition-colors flex items-center justify-center gap-2"
+        >
+          Next <IoArrowForward className="w-5 h-5" />
+        </motion.button>
+      </div>
+    </form>
+  );
 }
 
 
