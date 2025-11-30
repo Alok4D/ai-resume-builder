@@ -20,23 +20,17 @@ export default function PersonalInformation({ onNext, onBack }: Props) {
     const savedData = useSelector((state: RootState) => state.form.formData.personalInfo);
 
     const [formData, setFormData] = useState({
-        firstName: '',
-        lastName: '',
-        phone: '',
-        email: '',
+        firstName: savedData?.firstName || "",
+        lastName:  savedData?.lastName ||'',
+        phone: savedData?.phone || '',
+        email: savedData?.email || '',
         country: 'Bangladesh',
-        address: '',
-        city: '',
-        state: '',
-        zipCode: ''
+        address: savedData?.address || '',
+        city: savedData?.city || '',
+        state: savedData?.state || '',
+        zipCode: savedData?.zipCode || ''
     });
     const [errors, setErrors] = useState<any>({});
-
-    useEffect(() => {
-        if (savedData.firstName) {
-            setFormData(savedData);
-        }
-    }, [savedData]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });

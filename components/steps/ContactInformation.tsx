@@ -18,20 +18,14 @@ interface Props {
 export default function ContactInformation({ onNext, onBack }: Props) {
     const dispatch = useDispatch();
     const savedData = useSelector((state: RootState) => state.form.formData.contactInfo);
-    
+
     const [formData, setFormData] = useState({
-        linkedinProfile: '',
-        personalWebsite: '',
-        otherSocialMedia: 'Facebook',
-        otherSocialMediaURL: ''
+        linkedinProfile: savedData?.linkedinProfile || '',
+        personalWebsite: savedData?.personalWebsite || '',
+        otherSocialMedia: savedData?.otherSocialMedia || 'Facebook',
+        otherSocialMediaURL: savedData?.otherSocialMediaURL || ''
     });
     const [errors, setErrors] = useState<any>({});
-
-    useEffect(() => {
-        if (savedData.linkedinProfile) {
-            setFormData(savedData);
-        }
-    }, [savedData]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -70,9 +64,8 @@ export default function ContactInformation({ onNext, onBack }: Props) {
                         name="linkedinProfile"
                         value={formData.linkedinProfile}
                         onChange={handleChange}
-                        className={`w-full p-3 sm:p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${
-                            errors.linkedinProfile ? 'border-red-500' : 'border-[#D4D4D4]'
-                        }`}
+                        className={`w-full p-3 sm:p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${errors.linkedinProfile ? 'border-red-500' : 'border-[#D4D4D4]'
+                            }`}
                     />
                     {errors.linkedinProfile && <p className="text-red-500 text-sm mt-1">{errors.linkedinProfile}</p>}
                 </div>
@@ -86,9 +79,8 @@ export default function ContactInformation({ onNext, onBack }: Props) {
                         name="personalWebsite"
                         value={formData.personalWebsite}
                         onChange={handleChange}
-                        className={`w-full p-3 sm:p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${
-                            errors.personalWebsite ? 'border-red-500' : 'border-[#D4D4D4]'
-                        }`}
+                        className={`w-full p-3 sm:p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${errors.personalWebsite ? 'border-red-500' : 'border-[#D4D4D4]'
+                            }`}
                     />
                     {errors.personalWebsite && <p className="text-red-500 text-sm mt-1">{errors.personalWebsite}</p>}
                 </div>
@@ -139,9 +131,8 @@ export default function ContactInformation({ onNext, onBack }: Props) {
                             name="otherSocialMediaURL"
                             value={formData.otherSocialMediaURL}
                             onChange={handleChange}
-                            className={`w-full p-3 sm:p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${
-                                errors.otherSocialMediaURL ? 'border-red-500' : 'border-[#D4D4D4]'
-                            }`}
+                            className={`w-full p-3 sm:p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${errors.otherSocialMediaURL ? 'border-red-500' : 'border-[#D4D4D4]'
+                                }`}
                         />
                         {errors.otherSocialMediaURL && <p className="text-red-500 text-sm mt-1">{errors.otherSocialMediaURL}</p>}
                     </div>

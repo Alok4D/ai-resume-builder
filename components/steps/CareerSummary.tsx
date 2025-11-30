@@ -16,21 +16,15 @@ interface Props {
 }
 
 export default function CareerSummary({ onNext, onBack }: Props) {
-    
+
     const dispatch = useDispatch();
     const savedData = useSelector((state: RootState) => state.form.formData.careerSummary);
     
     const [formData, setFormData] = useState({
-        jobTitle: '',
-        summary: ''
+        jobTitle: savedData?.jobTitle || "",
+        summary: savedData?.summary || ""
     });
     const [errors, setErrors] = useState<any>({});
-
-    useEffect(() => {
-        if (savedData.jobTitle) {
-            setFormData(savedData);
-        }
-    }, [savedData]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });

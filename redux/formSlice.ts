@@ -25,6 +25,7 @@ export interface WorkExperience {
   endDate: string
   jobDescription: string
   skills: string[]
+  achievementFileName?: string
 }
 
 export interface Education {

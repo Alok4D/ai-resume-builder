@@ -81,8 +81,8 @@ export default function StepperPage() {
         <div className="min-h-screen py-8 px-4">
             <div>
                 {/* Progress Bar */}
-                <div className="mb-12">
-                    <div className="flex items-center justify-between relative">
+                <div className="lg:mb-12 mb-1 overflow-x-auto no-scrollbar">
+                    <div className="flex items-center justify-between gap-4 md:gap-8 relative  xl:w-full w-max px-2">
                         <div className="absolute top-5 left-0 h-0.5 bg-gray-200 w-full" style={{ zIndex: 0 }} />
                         <motion.div
                             className="absolute top-5 left-0 h-0.5 bg-emerald-500"
@@ -109,8 +109,8 @@ export default function StepperPage() {
                                             : isCurrent
                                                 ? 'bg-emerald-500 text-white ring-4 ring-emerald-100'
                                                 : isAccessible
-                                                    ? 'bg-white border-2 border-gray-300 text-gray-400 hover:border-emerald-500 hover:text-emerald-500'
-                                                    : 'bg-white border-2 border-gray-200 text-gray-300 cursor-not-allowed'
+                                                    ? 'bg-gray-300 border-2 border-gray-300 text-gray-400 hover:border-emerald-500 hover:text-emerald-500'
+                                                    : 'bg-[#e8e8e8] text-[#333333] cursor-not-allowed'
                                             }`}
                                         whileHover={isAccessible ? { scale: 1.1 } : {}}
                                         whileTap={isAccessible ? { scale: 0.95 } : {}}
@@ -128,7 +128,7 @@ export default function StepperPage() {
                                         )}
                                     </motion.button>
                                     <motion.div
-                                        className={`text-lg  mt-2 text-center max-w-40 ${isCurrent ? 'text-gray-900 font-medium' : 'text-[#333333]'
+                                        className={`md:text-lg text-sm mt-2 min-h-12.5 text-center max-w-40 ${isCurrent ? 'text-gray-900 font-medium' : 'text-[#333333]'
                                             }`}
                                         initial={{ opacity: 0, y: -10 }}
                                         animate={{ opacity: 1, y: 0 }}
