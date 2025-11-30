@@ -97,17 +97,16 @@ export default function AIGeneration({ onNext, onBack }: Props) {
                     disabled={isGenerating || !!generatedResume}
                     whileHover={!isGenerating && !generatedResume ? { scale: 1.02 } : {}}
                     whileTap={!isGenerating && !generatedResume ? { scale: 0.98 } : {}}
-                    className={`w-full px-6 py-4 rounded-lg font-medium text-white transition-all text-base sm:text-lg ${
-                        isGenerating || generatedResume
+                    className={`w-full px-6 py-4 rounded-lg font-medium text-white transition-all text-base sm:text-lg ${isGenerating || generatedResume
                             ? 'bg-emerald-400 cursor-not-allowed'
                             : 'bg-emerald-500 hover:bg-emerald-600'
-                    }`}
+                        }`}
                 >
                     {isGenerating
                         ? 'Generating Resume...'
                         : generatedResume
-                        ? '✓ Resume Generated Successfully'
-                        : 'Generate Resume with AI'}
+                            ? '✓ Resume Generated Successfully'
+                            : 'Generate Resume with AI'}
                 </motion.button>
 
                 {/* Success Card */}

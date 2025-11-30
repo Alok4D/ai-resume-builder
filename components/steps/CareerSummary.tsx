@@ -16,6 +16,7 @@ interface Props {
 }
 
 export default function CareerSummary({ onNext, onBack }: Props) {
+    
     const dispatch = useDispatch();
     const savedData = useSelector((state: RootState) => state.form.formData.careerSummary);
     
