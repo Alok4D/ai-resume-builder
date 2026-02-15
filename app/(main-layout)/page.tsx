@@ -33,7 +33,7 @@ const HomePage = () => {
           </p>
 
           <Link href="/stepper" className="mt-8">
-            <button className="w-full sm:w-auto bg-[#22C55E] text-white px-8 sm:px-10 py-3 rounded-md font-medium hover:bg-green-600 transition text-lg">
+            <button className="w-full cursor-pointer sm:w-auto bg-[#22C55E] text-white px-8 sm:px-10 py-3 rounded-md font-medium hover:bg-green-600 transition text-lg">
               Start Now
             </button>
           </Link>
