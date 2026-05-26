@@ -22,9 +22,22 @@ export default function CareerSummary({ onNext, onBack }: Props) {
     
     const [formData, setFormData] = useState({
         jobTitle: savedData?.jobTitle || "",
-        summary: savedData?.summary || ""
+        summary: savedData?.summary || "",
+        skills: savedData?.skills || [],
+        hobbies: savedData?.hobbies || []
     });
     const [errors, setErrors] = useState<any>({});
+    
+    const [selectedSkills, setSelectedSkills] = useState<string[]>(savedData?.skills || []);
+    const [selectedHobbies, setSelectedHobbies] = useState<string[]>(savedData?.hobbies || []);
+
+    const removeSkill = (skill: string) => {
+        setSelectedSkills(selectedSkills.filter(s => s !== skill));
+    };
+
+    const removeHobby = (hobby: string) => {
+        setSelectedHobbies(selectedHobbies.filter(h => h !== hobby));
+    };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -40,8 +53,9 @@ export default function CareerSummary({ onNext, onBack }: Props) {
         }
         
         setErrors({});
-        dispatch(setCareerSummary(formData));
-        onNext(formData);
+        const finalData = { ...formData, skills: selectedSkills, hobbies: selectedHobbies };
+        dispatch(setCareerSummary(finalData));
+        onNext(finalData);
     };
 
     return (
@@ -92,6 +106,69 @@ export default function CareerSummary({ onNext, onBack }: Props) {
                         className={`w-full p-3 sm:p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 resize-none ${errors.summary ? 'border-red-500' : 'border-[#D4D4D4]'}`}
                     />
                     {errors.summary && <p className="text-red-500 text-sm mt-1">{errors.summary}</p>}
+                </div>
+
+                {/* Skills & Hobbies Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                    {/* General Skills */}
+                    <div>
+                        <label className="block text-lg sm:text-xl font-medium text-[#101010] mb-2">General Skills</label>
+                        <div className="border border-[#D4D4D4] rounded-lg p-3 min-h-[120px] bg-[#fcfcfd]">
+                            <div className="flex flex-wrap gap-2 mb-2">
+                                {selectedSkills.map((skill) => (
+                                    <span key={skill} className="inline-flex items-center gap-1 px-3 py-1 bg-emerald-100 text-emerald-800 text-sm rounded-full">
+                                        {skill}
+                                        <button type="button" onClick={() => removeSkill(skill)} className="text-emerald-600 hover:text-emerald-900">×</button>
+                                    </span>
+                                ))}
+                            </div>
+                            <input
+                                type="text"
+                                placeholder="e.g., UI/UX Design (Press Enter)"
+                                className="w-full mt-2 p-2 border border-[#D4D4D4] rounded-lg outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500"
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter" && e.currentTarget.value.trim() !== "") {
+                                        e.preventDefault();
+                                        const newSkill = e.currentTarget.value.trim();
+                                        if (!selectedSkills.includes(newSkill)) {
+                                            setSelectedSkills([...selectedSkills, newSkill]);
+                                        }
+                                        e.currentTarget.value = "";
+                                    }
+                                }}
+                            />
+                        </div>
+                    </div>
+
+                    {/* Co-curricular Activities (Hobbies) */}
+                    <div>
+                        <label className="block text-lg sm:text-xl font-medium text-[#101010] mb-2">Co-curricular Activities</label>
+                        <div className="border border-[#D4D4D4] rounded-lg p-3 min-h-[120px] bg-[#fcfcfd]">
+                            <div className="flex flex-wrap gap-2 mb-2">
+                                {selectedHobbies.map((hobby) => (
+                                    <span key={hobby} className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 text-gray-800 text-sm rounded-full">
+                                        {hobby}
+                                        <button type="button" onClick={() => removeHobby(hobby)} className="text-gray-500 hover:text-gray-800">×</button>
+                                    </span>
+                                ))}
+                            </div>
+                            <input
+                                type="text"
+                                placeholder="e.g., IEEE Member (Press Enter)"
+                                className="w-full mt-2 p-2 border border-[#D4D4D4] rounded-lg outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500"
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter" && e.currentTarget.value.trim() !== "") {
+                                        e.preventDefault();
+                                        const newHobby = e.currentTarget.value.trim();
+                                        if (!selectedHobbies.includes(newHobby)) {
+                                            setSelectedHobbies([...selectedHobbies, newHobby]);
+                                        }
+                                        e.currentTarget.value = "";
+                                    }
+                                }}
+                            />
+                        </div>
+                    </div>
                 </div>
 
                 {/* Buttons */}

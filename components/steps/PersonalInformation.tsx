@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setPersonalInfo } from '../../redux/formSlice';
 import { validatePersonalInfo } from '../../lib/validation';
 import type { RootState } from '../../redux/store';
+import Image from 'next/image';
 
 interface Props {
     onNext: (data: any) => void;
@@ -27,9 +28,28 @@ export default function PersonalInformation({ onNext, onBack }: Props) {
         address: savedData?.address || '',
         city: savedData?.city || '',
         state: savedData?.state || '',
-        zipCode: savedData?.zipCode || ''
+        zipCode: savedData?.zipCode || '',
+        profilePicture: savedData?.profilePicture || '',
+        languages: savedData?.languages || []
     });
     const [errors, setErrors] = useState<any>({});
+    
+    const [selectedLanguages, setSelectedLanguages] = useState<string[]>(savedData?.languages || []);
+
+    const removeLanguage = (lang: string) => {
+        setSelectedLanguages(selectedLanguages.filter(l => l !== lang));
+    };
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files.length > 0) {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setFormData({ ...formData, profilePicture: reader.result as string });
+            };
+            reader.readAsDataURL(file);
+        }
+    };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -45,8 +65,9 @@ export default function PersonalInformation({ onNext, onBack }: Props) {
         }
 
         setErrors({});
-        dispatch(setPersonalInfo(formData));
-        onNext(formData);
+        const finalData = { ...formData, languages: selectedLanguages };
+        dispatch(setPersonalInfo(finalData));
+        onNext(finalData);
     };
 
     return (
@@ -61,6 +82,26 @@ export default function PersonalInformation({ onNext, onBack }: Props) {
             <form className="space-y-6" onSubmit={handleSubmit}>
                 {/* First & Last Name */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                    {/* Profile Picture */}
+                    <div className="md:col-span-2 flex flex-col sm:flex-row items-center gap-6 mb-4">
+                        <div className="w-24 h-24 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden bg-gray-50">
+                            {formData.profilePicture ? (
+                                <Image src={formData.profilePicture} alt="Profile" width={96} height={96} className="object-cover w-full h-full" />
+                            ) : (
+                                <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                            )}
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Profile Picture</label>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleFileChange}
+                                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100"
+                            />
+                        </div>
+                    </div>
+
                     <div>
                         <label className="block text-lg sm:text-xl font-medium text-[#101010] mb-2">
                             First Name
@@ -184,6 +225,36 @@ export default function PersonalInformation({ onNext, onBack }: Props) {
                             value={formData.zipCode}
                             onChange={handleChange}
                             className="w-full p-3 sm:p-4 text-[#333333] border border-[#D4D4D4] rounded-lg bg-[#fcfcfd] outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200"
+                        />
+                    </div>
+                </div>
+
+                {/* Languages */}
+                <div>
+                    <label className="block text-lg sm:text-xl font-medium text-[#101010] mb-2">Languages</label>
+                    <div className="border border-gray-300 rounded-lg p-3 min-h-[100px] bg-[#fcfcfd]">
+                        <div className="flex flex-wrap gap-2 mb-2">
+                            {selectedLanguages.map((lang) => (
+                                <span key={lang} className="inline-flex items-center gap-1 px-3 py-1 bg-emerald-100 text-emerald-800 text-sm rounded-full">
+                                    {lang}
+                                    <button type="button" onClick={() => removeLanguage(lang)} className="text-emerald-600 hover:text-emerald-900">×</button>
+                                </span>
+                            ))}
+                        </div>
+                        <input
+                            type="text"
+                            placeholder="Type a language (e.g., English) and press Enter"
+                            className="w-full mt-2 p-2 border border-gray-300 rounded-lg outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500"
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter" && e.currentTarget.value.trim() !== "") {
+                                    e.preventDefault();
+                                    const newLang = e.currentTarget.value.trim();
+                                    if (!selectedLanguages.includes(newLang)) {
+                                        setSelectedLanguages([...selectedLanguages, newLang]);
+                                    }
+                                    e.currentTarget.value = "";
+                                }
+                            }}
                         />
                     </div>
                 </div>

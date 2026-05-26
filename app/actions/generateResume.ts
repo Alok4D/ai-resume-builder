@@ -44,21 +44,48 @@ export async function generateResume(formData: any) {
       Name: ${formData.personalInfo.firstName} ${formData.personalInfo.lastName}
       Email: ${formData.personalInfo.email}
       Phone: ${formData.personalInfo.phone}
-      Location: ${formData.personalInfo.city}, ${formData.personalInfo.state}
+      Location: ${formData.personalInfo.address}, ${formData.personalInfo.city}, ${formData.personalInfo.state}, ${formData.personalInfo.country}
+      Profile Picture (Base64 URL): ${formData.personalInfo.profilePicture || ''}
+      Languages: ${formData.personalInfo.languages?.join(', ') || ''}
 
-            Job Title: ${formData.careerSummary.jobTitle}
-        Summary: ${formData.careerSummary.summary}
+      Job Title: ${formData.careerSummary.jobTitle}
+      Summary: ${formData.careerSummary.summary}
+      General Skills: ${formData.careerSummary.skills?.join(', ') || ''}
+      Co-curricular Activities / Hobbies: ${formData.careerSummary.hobbies?.join(', ') || ''}
 
-        Work Experience:
+      Social/Portfolio:
+      LinkedIn: ${formData.contactInfo?.linkedinProfile || ''}
+      Website: ${formData.contactInfo?.personalWebsite || ''}
+      Other: ${formData.contactInfo?.otherSocialMediaURL || ''}
+
+      Work Experience:
       ${workExpText}
 
       Education:
       ${educationText}
 
-    Certifications:
-        ${certText}
+      Certifications:
+      ${certText}
 
-    Make it professional with modern design, use emerald green (#10b981) as accent color.`;
+      CRITICAL LAYOUT INSTRUCTIONS:
+      You MUST design the resume with a STRICT 2-COLUMN LAYOUT exactly like this:
+      1. LEFT COLUMN (approx 30-35% width, light gray/white background):
+         - Circular profile picture at the top (use the base64 URL provided). If no picture, omit it.
+         - PORTFOLIO section (links).
+         - SKILLS section (General Skills as a bulleted list).
+         - LANGUAGES section.
+         - CO-CURRICULAR ACTIVITIES section.
+      
+      2. RIGHT COLUMN (approx 65-70% width):
+         - HEADER at the top: Full Name (large, uppercase) and Job Title. Contact info (Phone, Email, Location) neatly placed below the name.
+         - ABOUT ME section (using the Summary).
+         - EDUCATION QUALIFICATION section.
+         - TRAINING / CERTIFICATION section.
+         - WORK EXPERIENCE section.
+      
+      Use clean, modern fonts (like sans-serif).
+      Use a professional color palette with dark blue/gray for headers and standard text colors.
+      Make sure to use CSS Flexbox or CSS Grid for the layout to ensure it renders correctly as a 2-column page. Do NOT use markdown, return pure valid HTML string.`;
 
       const result = await model.generateContent(prompt);
       const aiResume = result.response.text();
@@ -70,149 +97,112 @@ export async function generateResume(formData: any) {
     }
 
     // Fallback template
-    const workExpHTML = formData.workExperience?.length
-      ? formData.workExperience
-          .map(
-            (exp: any) => `
-            <div style="margin-bottom: 20px;">
-              <h3 style="margin: 0; color: #2c3e50; font-size: 18px; font-weight: 700;">${
-                exp.jobTitle
-              }</h3>
-              <p style="margin: 5px 0; color: #7f8c8d; font-weight: 600; font-size: 16px;">${
-                exp.companyName
-              }</p>
-              <p style="margin: 5px 0; color: #95a5a6; font-size: 14px; font-weight: 500;">${
-                exp.startDate
-              } - ${exp.endDate}</p>
-              <p style="margin: 10px 0; line-height: 1.7; color: #4a5568; font-size: 15px;">${
-                exp.jobDescription
-              }</p>
-              ${
-                exp.skills?.length
-                  ? `<p style="margin: 8px 0; font-size: 15px;"><strong style="color: #2c3e50;">Skills:</strong> <span style="color: #4a5568;">${exp.skills.join(
-                      ", "
-                    )}</span></p>`
-                  : ""
-              }
-            </div>
-          `
-          )
-          .join("")
-      : "<p>No work experience provided</p>";
+    const templateHTML = `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>${formData.personalInfo.firstName} ${formData.personalInfo.lastName} - Resume</title>
+          <style>
+              body { margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f9fafb; color: #333; }
+              .resume-container { max-width: 1000px; margin: 40px auto; background: white; display: flex; flex-direction: row; box-shadow: 0 4px 6px rgba(0,0,0,0.1); min-height: 1122px; }
+              .left-column { width: 32%; padding: 40px 30px; border-right: 1px solid #e5e7eb; }
+              .right-column { width: 68%; padding: 40px 40px; }
+              .profile-img-container { text-align: center; margin-bottom: 30px; }
+              .profile-img { width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 4px solid #60a5fa; padding: 4px; }
+              .section-title { font-size: 16px; font-weight: 700; color: #1f2937; text-transform: uppercase; margin: 30px 0 15px 0; letter-spacing: 1px; }
+              .left-column ul { list-style-type: none; padding: 0; margin: 0; }
+              .left-column ul li { margin-bottom: 10px; font-size: 14px; position: relative; padding-left: 15px; color: #4b5563; }
+              .left-column ul li::before { content: '•'; color: #60a5fa; position: absolute; left: 0; font-size: 18px; top: -2px; }
+              .link-item { color: #2563eb; text-decoration: none; font-size: 14px; display: block; margin-bottom: 8px; word-break: break-all; }
+              .header-section { margin-bottom: 40px; }
+              .name { font-size: 36px; font-weight: 800; color: #1e293b; text-transform: uppercase; margin: 0 0 5px 0; letter-spacing: 2px; }
+              .job-title { font-size: 18px; color: #64748b; margin: 0 0 20px 0; text-transform: uppercase; letter-spacing: 1px; }
+              .contact-info { display: flex; flex-wrap: wrap; gap: 15px; font-size: 13px; color: #64748b; }
+              .contact-item { display: flex; align-items: center; gap: 5px; }
+              .right-section-title { font-size: 18px; font-weight: 700; color: #1e293b; text-transform: uppercase; margin: 30px 0 15px 0; letter-spacing: 1px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; }
+              .summary-text { font-size: 15px; line-height: 1.6; color: #475569; margin: 0; }
+              .item-block { margin-bottom: 20px; }
+              .item-title { font-size: 16px; font-weight: 700; color: #334155; margin: 0 0 5px 0; }
+              .item-subtitle { font-size: 15px; color: #64748b; margin: 0 0 5px 0; }
+              .item-date { font-size: 13px; color: #94a3b8; margin: 0 0 10px 0; }
+              .item-desc { font-size: 14px; line-height: 1.6; color: #475569; margin: 0; }
+          </style>
+      </head>
+      <body>
+          <div class="resume-container">
+              <div class="left-column">
+                  ${formData.personalInfo.profilePicture ? `<div class="profile-img-container"><img src="${formData.personalInfo.profilePicture}" alt="Profile" class="profile-img"></div>` : ''}
+                  
+                  <h3 class="section-title">Portfolio</h3>
+                  ${formData.contactInfo?.linkedinProfile ? `<a href="${formData.contactInfo.linkedinProfile}" class="link-item">LinkedIn</a>` : ''}
+                  ${formData.contactInfo?.personalWebsite ? `<a href="${formData.contactInfo.personalWebsite}" class="link-item">Website</a>` : ''}
+                  ${formData.contactInfo?.otherSocialMediaURL ? `<a href="${formData.contactInfo.otherSocialMediaURL}" class="link-item">Other</a>` : ''}
 
-    const educationHTML = formData.education?.length
-      ? formData.education
-          .map(
-            (edu: any) => `
-            <div style="margin-bottom: 15px;">
-              <h3 style="margin: 0; color: #2c3e50; font-size: 18px; font-weight: 700;">${edu.degree} in ${edu.major}</h3>
-              <p style="margin: 5px 0; color: #7f8c8d; font-size: 16px; font-weight: 600;">${edu.institutionName}</p>
-              <p style="margin: 5px 0; color: #95a5a6; font-size: 14px; font-weight: 500;">${edu.startDate} - ${edu.endDate}</p>
-            </div>
-          `
-          )
-          .join("")
-      : "<p>No education provided</p>";
+                  <h3 class="section-title">Skills</h3>
+                  <ul>
+                      ${(formData.careerSummary?.skills || []).map((skill: string) => `<li>${skill}</li>`).join('')}
+                  </ul>
 
-    const certHTML = formData.certifications?.length
-      ? formData.certifications
-          .map(
-            (cert: any) => `
-            <div style="margin-bottom: 15px;">
-              <h3 style="margin: 0; color: #2c3e50; font-size: 18px; font-weight: 700;">${
-                cert.certificationTitle
-              }</h3>
-              <p style="margin: 5px 0; color: #7f8c8d; font-size: 16px; font-weight: 600;">${
-                cert.issuingOrganization
-              }</p>
-              <p style="margin: 5px 0; color: #95a5a6; font-size: 14px; font-weight: 500;">Issued: ${
-                cert.issueDate
-              }${cert.expiryDate ? ` | Expires: ${cert.expiryDate}` : ""}</p>
-            </div>
-          `
-          )
-          .join("")
-      : "<p>No certifications provided</p>";
+                  <h3 class="section-title">Languages</h3>
+                  <ul>
+                      ${(formData.personalInfo?.languages || []).map((lang: string) => `<li>${lang}</li>`).join('')}
+                  </ul>
 
-    const resumeHTML = `
-      <div style="max-width: 800px; margin: 0 auto; padding: 40px; font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; background: white; color: #2d3748;">
-        <!-- Header -->
-        <div style="text-align: center; border-bottom: 3px solid #10b981; padding-bottom: 20px; margin-bottom: 30px;">
-          <h1 style="margin: 0; color: #1a202c; font-size: 38px; font-weight: 700; letter-spacing: -0.5px;">${
-            formData.personalInfo.firstName
-          } ${formData.personalInfo.lastName}</h1>
-          <h2 style="margin: 10px 0; color: #10b981; font-size: 22px; font-weight: 600;">${
-            formData.careerSummary.jobTitle
-          }</h2>
-          <div style="margin-top: 15px; color: #4a5568; font-size: 15px; font-weight: 500;">
-            <span style="margin: 0 12px;">📧 ${
-              formData.personalInfo.email
-            }</span>
-            <span style="margin: 0 12px;">📱 ${
-              formData.personalInfo.phone
-            }</span>
-            <span style="margin: 0 12px;">📍 ${formData.personalInfo.city}, ${
-      formData.personalInfo.state
-    }</span>
+                  <h3 class="section-title">Co-Curricular Activities</h3>
+                  <ul>
+                      ${(formData.careerSummary?.hobbies || []).map((hobby: string) => `<li>${hobby}</li>`).join('')}
+                  </ul>
+              </div>
+              
+              <div class="right-column">
+                  <div class="header-section">
+                      <h1 class="name">${formData.personalInfo.firstName} ${formData.personalInfo.lastName}</h1>
+                      <h2 class="job-title">${formData.careerSummary.jobTitle}</h2>
+                      <div class="contact-info">
+                          <span class="contact-item">📞 ${formData.personalInfo.phone}</span>
+                          <span class="contact-item">✉️ ${formData.personalInfo.email}</span>
+                          <span class="contact-item">📍 ${formData.personalInfo.address}, ${formData.personalInfo.city}, ${formData.personalInfo.country}</span>
+                      </div>
+                  </div>
+
+                  <h3 class="right-section-title">About Me</h3>
+                  <p class="summary-text">${formData.careerSummary.summary}</p>
+
+                  <h3 class="right-section-title">Education Qualification</h3>
+                  ${formData.education?.length ? formData.education.map((edu: any) => `
+                      <div class="item-block">
+                          <h4 class="item-title">${edu.degree} in ${edu.major}</h4>
+                          <p class="item-subtitle">${edu.institutionName}</p>
+                          <p class="item-date">${edu.startDate} - ${edu.endDate}</p>
+                      </div>
+                  `).join('') : ''}
+
+                  <h3 class="right-section-title">Training / Certification</h3>
+                  ${formData.certifications?.length ? formData.certifications.map((cert: any) => `
+                      <div class="item-block">
+                          <h4 class="item-title">${cert.certificationTitle}</h4>
+                          <p class="item-subtitle">${cert.issuingOrganization}</p>
+                          <p class="item-date">${cert.issueDate} - ${cert.expiryDate}</p>
+                      </div>
+                  `).join('') : ''}
+
+                  <h3 class="right-section-title">Work Experience</h3>
+                  ${formData.workExperience?.length ? formData.workExperience.map((exp: any) => `
+                      <div class="item-block">
+                          <h4 class="item-title">${exp.jobTitle} <span style="float:right; font-size:13px; font-weight:normal; color:#94a3b8;">${exp.startDate} - ${exp.endDate}</span></h4>
+                          <p class="item-subtitle">${exp.companyName}</p>
+                          <p class="item-desc">${exp.jobDescription}</p>
+                      </div>
+                  `).join('') : ''}
+              </div>
           </div>
-        </div>
-
-        <!-- Professional Summary -->
-        <div style="margin-bottom: 30px;">
-          <h2 style="color: #10b981; border-bottom: 2px solid #10b981; padding-bottom: 8px; margin-bottom: 15px; font-size: 22px; font-weight: 700;">Professional Summary</h2>
-          <p style="line-height: 1.8; color: #4a5568; font-size: 15px;">${
-            formData.careerSummary.summary
-          }</p>
-        </div>
-
-        <!-- Work Experience -->
-        <div style="margin-bottom: 30px;">
-          <h2 style="color: #10b981; border-bottom: 2px solid #10b981; padding-bottom: 8px; margin-bottom: 15px; font-size: 22px; font-weight: 700;">Work Experience</h2>
-          ${workExpHTML}
-        </div>
-
-        <!-- Education -->
-        <div style="margin-bottom: 30px;">
-          <h2 style="color: #10b981; border-bottom: 2px solid #10b981; padding-bottom: 8px; margin-bottom: 15px; font-size: 22px; font-weight: 700;">Education</h2>
-          ${educationHTML}
-        </div>
-
-        <!-- Certifications -->
-        <div style="margin-bottom: 30px;">
-          <h2 style="color: #10b981; border-bottom: 2px solid #10b981; padding-bottom: 8px; margin-bottom: 15px; font-size: 22px; font-weight: 700;">Certifications</h2>
-          ${certHTML}
-        </div>
-
-        <!-- Contact Information -->
-        ${
-          formData.contactInfo.linkedinProfile ||
-          formData.contactInfo.personalWebsite
-            ? `
-        <div style="margin-bottom: 30px;">
-          <h2 style="color: #10b981; border-bottom: 2px solid #10b981; padding-bottom: 8px; margin-bottom: 15px; font-size: 22px; font-weight: 700;">Links</h2>
-          ${
-            formData.contactInfo.linkedinProfile
-              ? `<p style="font-size: 15px; margin: 8px 0;">🔗 LinkedIn: <a href="${formData.contactInfo.linkedinProfile}" style="color: #10b981; text-decoration: none; font-weight: 500;">${formData.contactInfo.linkedinProfile}</a></p>`
-              : ""
-          }
-          ${
-            formData.contactInfo.personalWebsite
-              ? `<p style="font-size: 15px; margin: 8px 0;">🌐 Website: <a href="${formData.contactInfo.personalWebsite}" style="color: #10b981; text-decoration: none; font-weight: 500;">${formData.contactInfo.personalWebsite}</a></p>`
-              : ""
-          }
-          ${
-            formData.contactInfo.otherSocialMediaURL
-              ? `<p style="font-size: 15px; margin: 8px 0;">📱 ${formData.contactInfo.otherSocialMedia}: <a href="${formData.contactInfo.otherSocialMediaURL}" style="color: #10b981; text-decoration: none; font-weight: 500;">${formData.contactInfo.otherSocialMediaURL}</a></p>`
-              : ""
-          }
-        </div>
-        `
-            : ""
-        }
-      </div>
+      </body>
+      </html>
     `;
 
-    return { success: true, resume: resumeHTML };
+    return { success: true, resume: templateHTML };
   } catch (error: any) {
     console.error("Error generating resume:", error);
     return {

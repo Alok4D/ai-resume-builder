@@ -186,72 +186,7 @@ export default function Certifications({ onNext, onBack }: Props) {
                         </div>
                     </div>
 
-                    {/* Drag and Drop */}
-                    <div
-                        className={`border-2 border-dashed rounded-lg p-6 sm:p-8 text-center transition-colors bg-gray-50 ${isDragging ? "border-emerald-500 bg-emerald-50" : "border-gray-300"
-                            }`}
-                        onDragOver={(e) => {
-                            e.preventDefault();
-                            setIsDragging(true);
-                        }}
-                        onDragLeave={(e) => {
-                            e.preventDefault();
-                            setIsDragging(false);
-                        }}
-                        onDrop={(e) => {
-                            e.preventDefault();
-                            setIsDragging(false);
-                            const file = e.dataTransfer.files[0];
-                            if (file) onFileDrop(file);
-                        }}
-                    >
-                        <input
-                            type="file"
-                            id="education-achievements"
-                            {...register("education.achievements", { required: true })}
-                            className="hidden"
-                            onChange={(e) => e.target.files && onFileDrop(e.target.files[0])}
-                            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-                        />
-                        <label htmlFor="education-achievements" className="cursor-pointer">
-                            <div className="flex flex-col items-center gap-3">
-                                <svg
-                                    className="w-12 h-12 text-gray-400"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                                    />
-                                </svg>
-                                <div>
-                                    <p className="text-base text-gray-700 font-medium mb-1">Drop file or browse</p>
-                                    <p className="text-sm text-gray-400">Format: .pdf, .doc, .docx, .jpg, .jpeg, .png</p>
-                                </div>
-                                <button
-                                    type="button"
-                                    onClick={() => document.getElementById("education-achievements")?.click()}
-                                    className="mt-2 px-6 py-2 bg-gray-500 text-white text-sm rounded-md hover:bg-gray-600 transition-colors"
-                                >
-                                    Browse Files
-                                </button>
-                            </div>
-                        </label>
-
-                        {preview && (
-                            <div className="mt-4">
-                                <Image src={preview} alt="Preview" width={120} height={120} className="mx-auto rounded-md" />
-                            </div>
-                        )}
-                        {education.achievements && !preview && (
-                            <p className="mt-2 text-gray-600">{education.achievements.name}</p>
-                        )}
-                        {/* {errors.education?.achievements && <p className="text-red-500 mt-1">File is required</p>} */}
-                    </div>
+                   
                 </div>
             ) : (
                 <div className="space-y-6">

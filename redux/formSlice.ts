@@ -11,11 +11,15 @@ export interface PersonalInfo {
   city: string
   state: string
   zipCode: string
+  profilePicture?: string
+  languages: string[]
 }
 
 export interface CareerSummary {
   jobTitle: string
   summary: string
+  skills: string[]
+  hobbies: string[]
 }
 
 export interface WorkExperience {
@@ -73,11 +77,15 @@ const initialState: FormState = {
       address: '',
       city: '',
       state: '',
-      zipCode: ''
+      zipCode: '',
+      profilePicture: '',
+      languages: []
     },
     careerSummary: {
       jobTitle: '',
-      summary: ''
+      summary: '',
+      skills: [],
+      hobbies: []
     },
     workExperience: [],
     education: [],
