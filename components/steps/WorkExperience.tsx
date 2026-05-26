@@ -179,35 +179,6 @@ export default function WorkExperience({ onNext, onBack }: Props) {
 
         {/* Achievements & Skills */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Achievements */}
-          <div>
-            <label className="block text-lg sm:text-xl font-medium text-[#101010] mb-2">Achievements</label>
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 sm:p-6 text-center hover:border-emerald-500 transition-colors">
-              <input
-                type="file"
-                id="achievements"
-                className="hidden"
-                accept="image/*"
-                onChange={handleFileChange}
-              />
-              <label htmlFor="achievements" className="cursor-pointer">
-                <svg className="w-8 h-8 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                </svg>
-                <p className="text-sm text-gray-500">Drop file or browse</p>
-              </label>
-              {achievementFile && (
-                <Image
-                  src={URL.createObjectURL(achievementFile)}
-                  alt="Achievement"
-                  className="mt-2 w-32 h-32 object-cover rounded mx-auto"
-                  width={130}
-                  height={130}
-                />
-              )}
-              {errors.achievementFile && <p className="text-red-500 text-sm mt-1">{errors.achievementFile}</p>}
-            </div>
-          </div>
 
           {/* Skills */}
           <div>
