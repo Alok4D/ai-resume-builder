@@ -88,9 +88,9 @@ export default function ResumePreview({ onNext, onBack }: Props) {
             const opt = {
                 margin:       0,
                 filename:     'Professional-Resume.pdf',
-                image:        { type: 'jpeg', quality: 1.0 }, // Changed to JPEG with max quality to avoid png scale bugs
+                image:        { type: 'jpeg' as const, quality: 1.0 }, // Added 'as const' to fix TS error
                 html2canvas:  { scale: 2, useCORS: true, windowWidth: 800 },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                jsPDF:        { unit: 'mm' as const, format: 'a4' as const, orientation: 'portrait' as const },
                 pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
             };
 
