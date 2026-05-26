@@ -169,14 +169,3 @@ The application is fully responsive and works seamlessly across:
 - 📧 **Email**: alokroy602701@gmail.com
 - 📱 **Phone**: +880 1719277951
 
----
-
-<div align="center">
-  <h3>🌟 **Built with ❤️ using Next.js, TypeScript, Redux, and AI technology** 🌟</h3>
-  
-  <p>
-    <a href="https://smart-ai-resume-builder-ivory.vercel.app/" target="_blank">
-      <img src="https://img.shields.io/badge/🚀_Try_Now-Live_Demo-success?style=for-the-badge" alt="Try Now" />
-    </a>
-  </p>
-</div>
