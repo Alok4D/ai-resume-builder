@@ -5,7 +5,6 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
 import { IoArrowBack, IoArrowForward } from "react-icons/io5";
-import Image from "next/image";
 import { useDispatch, useSelector } from 'react-redux';
 import { addEducation, addCertification } from '../../redux/formSlice';
 import type { RootState } from '../../redux/store';
