@@ -237,7 +237,7 @@ export default function Certifications({ onNext, onBack }: Props) {
             )}
 
 
-            <div className="flex flex-col sm:flex-row gap-4 pt-8 mt-8 border-t border-t-[#E0E0E0]">
+            <div className="flex flex-col sm:flex-row gap-4 pt-8 mt-8">
                 <motion.button
                     type="button"
                     onClick={onBack}
