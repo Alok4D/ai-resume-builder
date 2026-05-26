@@ -75,7 +75,7 @@ export default function StepperPage() {
     };
 
     return (
-        <div className="min-h-screen py-8 px-4">
+        <div className="min-h-screen py-8 px-4 w-full max-w-[1400px] mx-auto">
             <div>
                 {/* Progress Bar */}
                 <div className="lg:mb-12 mb-1 overflow-x-auto no-scrollbar">

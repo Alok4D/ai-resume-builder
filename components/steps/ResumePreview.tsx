@@ -106,7 +106,7 @@ export default function ResumePreview({ onNext, onBack }: Props) {
     };
 
     return (
-        <div className="py-8 px-4 sm:px-6 md:px-16 lg:px-24 w-full mx-auto">
+        <div className="py-8 px-4 sm:px-6 md:px-16 lg:px-24">
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-5xl font-semibold text-[#333333] mb-2">
                     Review & Download
@@ -121,7 +121,7 @@ export default function ResumePreview({ onNext, onBack }: Props) {
 
                 {generatedResume ? (
                     <>
-                        <div id="full-resume-preview" className="bg-white p-4 sm:p-8 border border-gray-200 rounded-lg shadow-sm overflow-x-auto">
+                        <div id="full-resume-preview" className="bg-white p-4 sm:p-8 border border-gray-200 rounded-lg shadow-sm overflow-x-auto w-full">
                             <div className="w-full max-w-[1000px] mx-auto [&_.resume-container]:!w-full [&_.resume-container]:!mx-auto" dangerouslySetInnerHTML={{ __html: generatedResume }} />
                         </div>
 
