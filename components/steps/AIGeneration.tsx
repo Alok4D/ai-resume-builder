@@ -8,6 +8,7 @@ import { setGeneratedResume } from '../../redux/formSlice';
 import { generateResume } from '../../app/actions/generateResume';
 import type { RootState } from '../../redux/store';
 import { IoArrowBack, IoArrowForward } from 'react-icons/io5';
+import { RefreshCw } from 'lucide-react';
 
 interface Props {
     onNext: (data: any) => void;
@@ -51,6 +52,13 @@ export default function AIGeneration({ onNext, onBack }: Props) {
         } finally {
             setIsGenerating(false);
         }
+    };
+
+    const handleRegenerate = () => {
+        setLocalGeneratedResume('');
+        dispatch(setGeneratedResume(''));
+        setProgress(0);
+        setError('');
     };
 
     return (
@@ -119,6 +127,15 @@ export default function AIGeneration({ onNext, onBack }: Props) {
                         </div>
 
                         <div className="flex flex-col sm:flex-row gap-4">
+                            <motion.button
+                                type="button"
+                                onClick={handleRegenerate}
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                className="flex-1 px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors flex items-center justify-center gap-2"
+                            >
+                                <RefreshCw className="w-4 h-4" /> Regenerate
+                            </motion.button>
                             <motion.button
                                 type="button"
                                 onClick={onBack}

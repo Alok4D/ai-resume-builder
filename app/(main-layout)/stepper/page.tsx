@@ -30,7 +30,6 @@ const steps: Step[] = [
 export default function StepperPage() {
     const [currentStep, setCurrentStep] = useState<number>(1);
     const [completedSteps, setCompletedSteps] = useState<number[]>([]);
-    const [formData, setFormData] = useState<any>({});
 
     const goToStep = (stepId: number): void => {
         if (stepId <= currentStep || completedSteps.includes(stepId)) {
@@ -39,8 +38,6 @@ export default function StepperPage() {
     };
 
     const handleNext = (data: any): void => {
-        setFormData((prev: any) => ({ ...prev, ...data }));
-
         if (!completedSteps.includes(currentStep)) {
             setCompletedSteps([...completedSteps, currentStep]);
         }

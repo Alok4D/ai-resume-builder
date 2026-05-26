@@ -53,17 +53,12 @@ export default function WorkExperience({ onNext, onBack }: Props) {
 
     const validationErrors = validateWorkExperience(formData);
 
-    // Require all fields
+    // Require all text fields
     Object.keys(formData).forEach(key => {
       if (!formData[key as keyof typeof formData]) {
         validationErrors[key] = "This field is required";
       }
     });
-
-    // Require achievement file
-    if (!achievementFile) {
-      validationErrors.achievementFile = "Achievement file is required";
-    }
 
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
@@ -76,10 +71,10 @@ export default function WorkExperience({ onNext, onBack }: Props) {
     dispatch(addWorkExperience({
       ...formData,
       skills: selectedSkills,
-      achievementFileName: achievementFile?.name // store file name in Redux, actual file stays local
+      achievementFileName: achievementFile?.name
     }));
 
-    // Pass the actual file to parent
+    // Pass the actual file to parent (file upload is optional)
     onNext({ ...formData, skills: selectedSkills, achievementFile });
   };
 

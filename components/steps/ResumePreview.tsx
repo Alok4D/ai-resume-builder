@@ -6,7 +6,6 @@ import { useSelector } from 'react-redux';
 import type { RootState } from '../../redux/store';
 import { IoArrowBack } from 'react-icons/io5';
 import { Download, RefreshCw } from 'lucide-react';
-import { useState } from 'react';
 
 interface Props {
     onNext: (data: any) => void;
@@ -15,7 +14,6 @@ interface Props {
 
 export default function ResumePreview({ onNext, onBack }: Props) {
     const generatedResume = useSelector((state: RootState) => state.form.generatedResume);
-    const [error, setError] = useState('');
 
     const handleDownloadPDF = () => {
         const printWindow = window.open('', '_blank');
@@ -47,7 +45,7 @@ export default function ResumePreview({ onNext, onBack }: Props) {
     };
 
     return (
-        <div className="py-8 px-24">
+        <div className="py-8 px-4 sm:px-6 md:px-16 lg:px-24">
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-5xl font-semibold text-[#333333] mb-2">
                     Review & Download
@@ -59,11 +57,6 @@ export default function ResumePreview({ onNext, onBack }: Props) {
             </p>
 
             <div className="space-y-6">
-                {error && (
-                    <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-                        <p className="text-red-600 text-sm">{error}</p>
-                    </div>
-                )}
 
                 {generatedResume ? (
                     <>

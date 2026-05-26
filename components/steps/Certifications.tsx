@@ -6,8 +6,9 @@ import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
 import { IoArrowBack, IoArrowForward } from "react-icons/io5";
 import Image from "next/image";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addEducation, addCertification } from '../../redux/formSlice';
+import type { RootState } from '../../redux/store';
 
 interface Props {
     onNext: (data: any) => void;
@@ -65,28 +66,24 @@ export default function Certifications({ onNext, onBack }: Props) {
 
 
 
-    useEffect(() => {
-        const savedData = localStorage.getItem("educationAndCertificationData");
-        if (savedData) {
-            const parsed = JSON.parse(savedData);
-            if (parsed.education) {
-                (Object.entries(parsed.education) as [keyof EducationForm, any][]).forEach(
-                    ([key, value]) => {
-                        setValue(`education.${key}`, value);
-                    }
-                );
-            }
-            if (parsed.certification) {
-                (Object.entries(parsed.certification) as [keyof CertificationForm, any][]).forEach(
-                    ([key, value]) => {
-                        setValue(`certification.${key}`, value);
-                    }
-                );
-            }
+    const savedEducation = useSelector((state: RootState) => state.form.formData.education);
+    const savedCertifications = useSelector((state: RootState) => state.form.formData.certifications);
 
-            if (parsed.education?.achievementsPreview) setPreview(parsed.education.achievementsPreview);
+    useEffect(() => {
+        const latestEdu = savedEducation?.[savedEducation.length - 1];
+        const latestCert = savedCertifications?.[savedCertifications.length - 1];
+
+        if (latestEdu) {
+            (Object.entries(latestEdu) as [keyof EducationForm, any][]).forEach(([key, value]) => {
+                if (key !== 'achievements') setValue(`education.${key}`, value);
+            });
         }
-    }, [setValue]);
+        if (latestCert) {
+            (Object.entries(latestCert) as [keyof CertificationForm, any][]).forEach(([key, value]) => {
+                setValue(`certification.${key}`, value);
+            });
+        }
+    }, [savedEducation, savedCertifications, setValue]);
 
     const onFileDrop = (file: File) => {
         setValue("education.achievements", file, { shouldValidate: true });
@@ -318,11 +315,11 @@ export default function Certifications({ onNext, onBack }: Props) {
                 <motion.button
                     type="button"
                     onClick={() => {
-                        handleSubmit(onSubmit)()
-                        if (Object.keys(errors).length > 0) {
-                            setFormError(true)
+                        handleSubmit(onSubmit)();
+                        if (!formState.isValid) {
+                            setFormError(true);
                         } else {
-                            setFormError(false)
+                            setFormError(false);
                         }
                     }}
                     whileHover={{ scale: 1.02 }}

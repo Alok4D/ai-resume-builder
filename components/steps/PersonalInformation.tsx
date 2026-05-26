@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import Link from 'next/link';
 import { IoArrowBack, IoArrowForward } from "react-icons/io5";
 import { useDispatch, useSelector } from 'react-redux';
 import { setPersonalInfo } from '../../redux/formSlice';
@@ -193,16 +192,12 @@ export default function PersonalInformation({ onNext, onBack }: Props) {
                 <div className="flex flex-col sm:flex-row gap-4 pt-6">
                     <motion.button
                         type="button"
+                        onClick={onBack}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
-                        className="flex-1"
+                        className="flex-1 px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors flex justify-center items-center gap-2"
                     >
-                        <Link
-                            href={'/'}
-                            className="w-full flex justify-center items-center px-6 py-3 bg-gray-400 text-white rounded-lg font-semibold hover:bg-gray-500 transition-colors gap-2"
-                        >
-                            <IoArrowBack className="w-5 h-5" /> Back
-                        </Link>
+                        <IoArrowBack className="w-5 h-5" /> Back
                     </motion.button>
 
                     <motion.button

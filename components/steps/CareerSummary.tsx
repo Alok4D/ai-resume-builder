@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FiChevronDown } from "react-icons/fi";
 import { IoArrowBack, IoArrowForward } from 'react-icons/io5';
