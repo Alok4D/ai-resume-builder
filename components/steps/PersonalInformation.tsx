@@ -84,11 +84,11 @@ export default function PersonalInformation({ onNext, onBack }: Props) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                     {/* Profile Picture */}
                     <div className="md:col-span-2 flex flex-col sm:flex-row items-center gap-6 mb-4">
-                        <div className="w-24 h-24 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden bg-gray-50">
+                        <div className="w-32 h-32 sm:w-36 sm:h-36 rounded-full border-2 border-dashed border-gray-300 flex flex-shrink-0 items-center justify-center overflow-hidden bg-gray-50">
                             {formData.profilePicture ? (
-                                <Image src={formData.profilePicture} alt="Profile" width={96} height={96} className="object-cover w-full h-full" />
+                                <Image src={formData.profilePicture} alt="Profile" width={144} height={144} className="object-cover w-full h-full" />
                             ) : (
-                                <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                                <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                             )}
                         </div>
                         <div>

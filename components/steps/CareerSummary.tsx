@@ -154,7 +154,7 @@ export default function CareerSummary({ onNext, onBack }: Props) {
                             </div>
                             <input
                                 type="text"
-                                placeholder="e.g., IEEE Member (Press Enter)"
+                                placeholder="e.g., Volunteer Work, Photography, Debating (Press Enter)"
                                 className="w-full mt-2 p-2 border border-[#D4D4D4] rounded-lg outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500"
                                 onKeyDown={(e) => {
                                     if (e.key === "Enter" && e.currentTarget.value.trim() !== "") {

@@ -35,7 +35,7 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
-button,
-a{
+
+button, a{
   cursor: pointer;
 }
