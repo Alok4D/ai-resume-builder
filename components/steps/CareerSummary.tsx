@@ -39,6 +39,24 @@ export default function CareerSummary({ onNext, onBack }: Props) {
         setSelectedHobbies(selectedHobbies.filter(h => h !== hobby));
     };
 
+    const jobOptions = [
+        "Frontend Developer",
+        "Backend Developer",
+        "Full Stack Developer",
+        "UI/UX Designer",
+        "Project Manager",
+        "Software Engineer",
+        "Data Scientist",
+        "Graphic Designer",
+        "Digital Marketer"
+    ];
+
+    const [showCustomJob, setShowCustomJob] = useState(!jobOptions.includes(savedData?.jobTitle || "") && savedData?.jobTitle !== "");
+
+    const handleJobChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        handleChange(e);
+    };
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
@@ -70,25 +88,50 @@ export default function CareerSummary({ onNext, onBack }: Props) {
             <form className="space-y-6" onSubmit={handleSubmit}>
                 {/* Job Title */}
                 <div className="relative">
-                    <label className="block text-lg sm:text-xl font-medium text-[#101010] mb-2">
-                        Job Title
-                    </label>
-                    <div className="relative">
-                        <select
-                            name="jobTitle"
-                            value={formData.jobTitle}
-                            onChange={handleChange}
-                            className={`w-full p-3 sm:p-4 pr-12 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 appearance-none ${errors.jobTitle ? 'border-red-500' : 'border-[#D4D4D4]'}`}
+                    <div className="flex justify-between items-end mb-2">
+                        <label className="block text-lg sm:text-xl font-medium text-[#101010]">
+                            Job Title
+                        </label>
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setShowCustomJob(!showCustomJob);
+                                setFormData({ ...formData, jobTitle: "" });
+                            }}
+                            className="text-sm text-emerald-600 hover:text-emerald-700 font-medium px-2 py-1 rounded hover:bg-emerald-50 transition-colors"
                         >
-                            <option value="">Select your most recent or current job title</option>
-                            <option value="Frontend Developer">Frontend Developer</option>
-                            <option value="Backend Developer">Backend Developer</option>
-                            <option value="Full Stack Developer">Full Stack Developer</option>
-                            <option value="UI/UX Designer">UI/UX Designer</option>
-                            <option value="Project Manager">Project Manager</option>
-                        </select>
-                        <FiChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" size={22} />
+                            {showCustomJob ? "Select from list" : "+ Add custom job title"}
+                        </button>
                     </div>
+
+                    {showCustomJob ? (
+                        <div className="relative">
+                            <input
+                                type="text"
+                                name="jobTitle"
+                                value={formData.jobTitle}
+                                onChange={handleChange}
+                                placeholder="Type your custom job title here"
+                                className={`w-full p-3 sm:p-4 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 ${errors.jobTitle ? 'border-red-500' : 'border-[#D4D4D4]'}`}
+                                autoFocus
+                            />
+                        </div>
+                    ) : (
+                        <div className="relative">
+                            <select
+                                name="jobTitle"
+                                value={formData.jobTitle}
+                                onChange={handleJobChange}
+                                className={`w-full p-3 sm:p-4 pr-12 text-[#333333] border rounded-lg bg-[#fcfcfd] outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 appearance-none ${errors.jobTitle ? 'border-red-500' : 'border-[#D4D4D4]'}`}
+                            >
+                                <option value="">Select your most recent or current job title</option>
+                                {jobOptions.map(opt => (
+                                    <option key={opt} value={opt}>{opt}</option>
+                                ))}
+                            </select>
+                            <FiChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" size={22} />
+                        </div>
+                    )}
                     {errors.jobTitle && <p className="text-red-500 text-sm mt-1">{errors.jobTitle}</p>}
                 </div>
 
