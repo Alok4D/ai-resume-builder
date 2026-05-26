@@ -25,9 +25,11 @@ export default function ResumePreview({ onNext, onBack }: Props) {
 
             // Create a temporary hidden iframe to isolate from Tailwind's global lab() variables
             const iframe = document.createElement('iframe');
-            iframe.style.position = 'absolute';
+            iframe.style.position = 'fixed';
+            iframe.style.top = '-10000px'; // Hide off-screen
+            iframe.style.left = '0';
             iframe.style.width = '1000px';
-            iframe.style.height = '0'; // Keep hidden visually
+            iframe.style.height = '5000px'; // Give it plenty of height to avoid clipping
             iframe.style.border = 'none';
             document.body.appendChild(iframe);
             
@@ -51,7 +53,7 @@ export default function ResumePreview({ onNext, onBack }: Props) {
                     </style>
                 </head>
                 <body>
-                    <div id="resume-capture-wrapper" style="width: 1000px; background: white;">
+                    <div id="resume-capture-wrapper" style="width: 1000px; background: white; min-height: 1122px;">
                         ${generatedResume}
                     </div>
                 </body>
@@ -67,14 +69,15 @@ export default function ResumePreview({ onNext, onBack }: Props) {
 
             // Capture the element inside the iframe using html2canvas
             const canvas = await html2canvas(elementToCapture, {
-                scale: 2,
+                scale: 3, // Higher scale for crystal clear quality
                 useCORS: true,
                 logging: false,
                 backgroundColor: '#ffffff',
                 windowWidth: 1000
             });
 
-            const imgData = canvas.toDataURL('image/jpeg', 1.0);
+            // Use PNG instead of JPEG for lossless quality
+            const imgData = canvas.toDataURL('image/png');
             
             const pdfWidth = 210; // A4 width in mm
             const pdfHeight = 297; // A4 height in mm
@@ -89,7 +92,21 @@ export default function ResumePreview({ onNext, onBack }: Props) {
             const imgWidth = pdfWidth;
             const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
 
-            pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight);
+            let heightLeft = imgHeight;
+            let position = 0;
+
+            // First page
+            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pdfHeight;
+
+            // Add new pages if the resume is longer than one A4 page
+            while (heightLeft > 0) {
+                position = position - pdfHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pdfHeight;
+            }
+
             pdf.save('Professional-Resume.pdf');
 
             // Cleanup
