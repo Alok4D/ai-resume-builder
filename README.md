@@ -5,7 +5,7 @@
   <p>A modern, multi-step CV/Resume builder application built with Next.js, TypeScript, Redux, and AI integration using Google's Gemini model.</p>
   
   <p>
-    <a href="https://smart-ai-resume-builder-ivory.vercel.app/" target="_blank">
+    <a href="https://ai-resume-builder-bd.vercel.app" target="_blank">
       <img src="https://img.shields.io/badge/🌐_Live_Demo-Visit_App-brightgreen?style=for-the-badge&logo=vercel" alt="Live Demo" />
     </a>
   </p>
@@ -28,7 +28,7 @@
 
 ### 🌟 **Live Application:**
 
-🔗 **[https://smart-ai-resume-builder-ivory.vercel.app/](https://smart-ai-resume-builder-ivory.vercel.app/)**
+🔗 **[https://ai-resume-builder-bd.vercel.app](https://ai-resume-builder-bd.vercel.app)**
 
 ##  Features
 
@@ -48,9 +48,16 @@
 - **Styling**: Tailwind CSS
 - **Animations**: Framer Motion
 - **AI Integration**: AI SDK with Google Gemini
-- **PDF Generation**: jsPDF + html2canvas
+- **PDF Generation**: html2pdf.js + jsPDF + html2canvas
 - **Form Handling**: React Hook Form
 - **Icons**: Lucide React
+
+## 🚀 Recent Updates & Enhancements
+
+- **Flawless PDF Generation**: Migrated to `html2pdf.js` to ensure the generated A4 resume downloads perfectly without text clipping, incorrect scaling, or UI bleeding.
+- **Responsive Layout Architecture**: Re-engineered the main `Stepper` page layout to use a globally responsive constraint (`max-w-[1400px] mx-auto`), ensuring all form components and preview screens remain perfectly centered on ultrawide monitors.
+- **Dynamic Form Handling**: Improved dynamic form state persistence for custom fields, including job titles and co-curricular activities, ensuring the Google Gemini AI receives complete user data.
+- **Dependency Security Updates**: Updated Next.js and React dependencies to resolve deployment vulnerabilities on Vercel.
 
 ## 📋 Resume Sections
 
