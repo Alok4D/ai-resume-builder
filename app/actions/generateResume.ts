@@ -16,7 +16,7 @@ export async function generateResume(formData: any) {
         ? formData.workExperience
             .map(
               (exp: any) =>
-                `${exp.jobTitle} at ${exp.companyName} (${exp.startDate} - ${exp.endDate}): ${exp.jobDescription}`
+                `${exp.jobTitle} at ${exp.companyName} (${exp.startDate} - ${exp.endDate}): ${exp.jobDescription}${exp.skills && exp.skills.length ? ' | Skills: ' + exp.skills.join(', ') : ''}`
             )
             .join("\n")
         : "No work experience";
@@ -81,7 +81,7 @@ export async function generateResume(formData: any) {
          - ABOUT ME section (using the Summary).
          - EDUCATION QUALIFICATION section.
          - TRAINING / CERTIFICATION section.
-         - WORK EXPERIENCE section.
+         - WORK EXPERIENCE section. (IMPORTANT: For each work experience entry, you MUST include the associated Skills directly below the job description).
       
       Use clean, modern fonts (like sans-serif).
       Use a professional color palette with dark blue/gray for headers and standard text colors.
@@ -194,6 +194,7 @@ export async function generateResume(formData: any) {
                           <h4 class="item-title">${exp.jobTitle} <span style="float:right; font-size:13px; font-weight:normal; color:#94a3b8;">${exp.startDate} - ${exp.endDate}</span></h4>
                           <p class="item-subtitle">${exp.companyName}</p>
                           <p class="item-desc">${exp.jobDescription}</p>
+                          ${exp.skills && exp.skills.length ? `<p class="item-desc" style="margin-top:5px; font-size:13px;"><strong style="color:#64748b;">Skills Used:</strong> ${exp.skills.join(', ')}</p>` : ''}
                       </div>
                   `).join('') : ''}
               </div>
