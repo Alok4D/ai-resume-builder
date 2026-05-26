@@ -15,32 +15,89 @@ interface Props {
 export default function ResumePreview({ onNext, onBack }: Props) {
     const generatedResume = useSelector((state: RootState) => state.form.generatedResume);
 
-    const handleDownloadPDF = () => {
-        const printWindow = window.open('', '_blank');
-        if (printWindow && generatedResume) {
-            printWindow.document.write(`
+    const handleDownloadPDF = async () => {
+        if (!generatedResume) return;
+        
+        try {
+            // Dynamically import libraries
+            const html2canvas = (await import('html2canvas')).default;
+            const { jsPDF } = await import('jspdf');
+
+            // Create a temporary hidden iframe to isolate from Tailwind's global lab() variables
+            const iframe = document.createElement('iframe');
+            iframe.style.position = 'absolute';
+            iframe.style.width = '1000px';
+            iframe.style.height = '0'; // Keep hidden visually
+            iframe.style.border = 'none';
+            document.body.appendChild(iframe);
+            
+            const doc = iframe.contentWindow?.document;
+            if (!doc) throw new Error("Could not create iframe document");
+
+            // Write the resume into the iframe WITHOUT global styles
+            doc.open();
+            doc.write(`
                 <!DOCTYPE html>
                 <html>
                 <head>
                     <title>Resume</title>
                     <style>
-                        body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
-                        @media print {
-                            body { margin: 0; }
+                        body { margin: 0; padding: 0; background-color: #ffffff; }
+                        /* Ensure background colors are captured by html2canvas */
+                        * {
+                            -webkit-print-color-adjust: exact !important;
+                            color-adjust: exact !important;
                         }
                     </style>
                 </head>
                 <body>
-                    ${generatedResume}
-                    <script>
-                        window.onload = function() {
-                            window.print();
-                        }
-                    </script>
+                    <div id="resume-capture-wrapper" style="width: 1000px; background: white;">
+                        ${generatedResume}
+                    </div>
                 </body>
                 </html>
             `);
-            printWindow.document.close();
+            doc.close();
+
+            // Wait a little for any images inside the iframe to load
+            await new Promise(resolve => setTimeout(resolve, 800));
+
+            const elementToCapture = doc.getElementById('resume-capture-wrapper');
+            if (!elementToCapture) throw new Error("Could not find capture wrapper");
+
+            // Capture the element inside the iframe using html2canvas
+            const canvas = await html2canvas(elementToCapture, {
+                scale: 2,
+                useCORS: true,
+                logging: false,
+                backgroundColor: '#ffffff',
+                windowWidth: 1000
+            });
+
+            const imgData = canvas.toDataURL('image/jpeg', 1.0);
+            
+            const pdfWidth = 210; // A4 width in mm
+            const pdfHeight = 297; // A4 height in mm
+            
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4'
+            });
+
+            const imgProps = pdf.getImageProperties(imgData);
+            const imgWidth = pdfWidth;
+            const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
+
+            pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight);
+            pdf.save('Professional-Resume.pdf');
+
+            // Cleanup
+            document.body.removeChild(iframe);
+
+        } catch (error) {
+            console.error('Error generating PDF:', error);
+            alert('Sorry, there was an error downloading the PDF. Please try again.');
         }
     };
 
