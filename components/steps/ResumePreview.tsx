@@ -21,81 +21,43 @@ export default function ResumePreview({ onNext, onBack }: Props) {
         
         try {
             // Dynamically import libraries
-            const html2canvas = (await import('html2canvas')).default;
-            const { jsPDF } = await import('jspdf');
+            const html2pdf = (await import('html2pdf.js')).default;
 
-            const iframe = document.createElement('iframe');
-            iframe.style.position = 'fixed';
-            iframe.style.top = '-10000px'; // Hide off-screen
-            iframe.style.left = '0';
-            iframe.style.width = '800px'; // Exact A4 width approximation
-            iframe.style.height = '5000px'; 
-            iframe.style.border = 'none';
-            document.body.appendChild(iframe);
+            // Create a temporary container in the main document
+            const tempContainer = document.createElement('div');
+            // Hide it visually but keep it in the layout so html2canvas can read it
+            tempContainer.style.position = 'absolute';
+            tempContainer.style.top = '0';
+            tempContainer.style.left = '0';
+            tempContainer.style.width = '800px';
+            tempContainer.style.zIndex = '-10000';
+            tempContainer.style.opacity = '0';
+            tempContainer.style.pointerEvents = 'none';
             
-            const doc = iframe.contentWindow?.document;
-            if (!doc) throw new Error("Could not create iframe document");
+            // Clean up html and body tags from generated resume
+            const cleanHtml = generatedResume.replace(/<!doctype html>|<html[^>]*>|<\/html>|<body>|<\/body>/gi, '');
+            tempContainer.innerHTML = cleanHtml;
+            document.body.appendChild(tempContainer);
 
-            doc.open();
-            doc.write(`
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>Resume</title>
-                    <style>
-                        html, body { 
-                            margin: 0; 
-                            padding: 0; 
-                            background-color: #ffffff; 
-                            width: 800px; 
-                            overflow-x: hidden; 
-                        }
-                        * {
-                            -webkit-print-color-adjust: exact !important;
-                            color-adjust: exact !important;
-                            box-sizing: border-box;
-                        }
-                        #resume-capture-wrapper { 
-                            width: 800px; 
-                            background: white; 
-                            overflow: hidden; 
-                        }
-                        .item-block { page-break-inside: avoid; break-inside: avoid; margin-bottom: 20px; }
-                        h1, h2, h3, h4, .section-title, .right-section-title { page-break-after: avoid; break-after: avoid; }
-                        ul, li { page-break-inside: avoid; break-inside: avoid; }
-                        
-                        /* Force text wrapping to prevent right side cutoff */
-                        p, span, div, a, li { white-space: normal; word-wrap: break-word; overflow-wrap: break-word; }
-                        
-                        /* Fix empty pages issue by resetting margin */
-                        .resume-container {
-                            margin: 0 !important;
-                            box-shadow: none !important;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div id="resume-capture-wrapper">
-                        ${generatedResume.replace(/<!doctype html>|<html[^>]*>|<\/html>|<body>|<\/body>/gi, '')}
-                    </div>
-                </body>
-                </html>
-            `);
-            doc.close();
-
-            // Wait a little for any images inside the iframe to load
+            // Wait for images to load
             await new Promise(resolve => setTimeout(resolve, 1000));
 
-            const elementToCapture = doc.getElementById('resume-capture-wrapper');
-            if (!elementToCapture) throw new Error("Could not find capture wrapper");
+            // Find the resume container or use the wrapper
+            let elementToCapture = tempContainer.querySelector('.resume-container') as HTMLElement;
+            if (!elementToCapture) {
+                elementToCapture = tempContainer;
+            }
 
-            const html2pdf = (await import('html2pdf.js')).default;
+            // Force print styles directly on the element to ensure no blank spaces
+            elementToCapture.style.margin = '0';
+            elementToCapture.style.boxShadow = 'none';
+            elementToCapture.style.width = '100%';
 
             const opt = {
                 margin:       0,
                 filename:     'Professional-Resume.pdf',
-                image:        { type: 'jpeg' as const, quality: 1.0 }, // Added 'as const' to fix TS error
-                html2canvas:  { scale: 2, useCORS: true, windowWidth: 800 },
+                image:        { type: 'jpeg' as const, quality: 1.0 },
+                html2canvas:  { scale: 2, useCORS: true, windowWidth: 800, scrollY: 0, scrollX: 0 },
                 jsPDF:        { unit: 'mm' as const, format: 'a4' as const, orientation: 'portrait' as const },
                 pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
             };
@@ -103,7 +65,7 @@ export default function ResumePreview({ onNext, onBack }: Props) {
             await html2pdf().set(opt).from(elementToCapture).save();
 
             // Cleanup
-            document.body.removeChild(iframe);
+            document.body.removeChild(tempContainer);
 
         } catch (error) {
             console.error('Error generating PDF:', error);
