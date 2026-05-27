@@ -66,11 +66,17 @@ export default function ResumePreview({ onNext, onBack }: Props) {
                         
                         /* Force text wrapping to prevent right side cutoff */
                         p, span, div, a, li { white-space: normal; word-wrap: break-word; overflow-wrap: break-word; }
+                        
+                        /* Fix empty pages issue by resetting margin */
+                        .resume-container {
+                            margin: 0 !important;
+                            box-shadow: none !important;
+                        }
                     </style>
                 </head>
                 <body>
                     <div id="resume-capture-wrapper">
-                        ${generatedResume}
+                        ${generatedResume.replace(/<!doctype html>|<html[^>]*>|<\/html>|<body>|<\/body>/gi, '')}
                     </div>
                 </body>
                 </html>

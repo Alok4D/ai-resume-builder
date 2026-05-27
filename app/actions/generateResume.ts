@@ -85,10 +85,14 @@ export async function generateResume(formData: any) {
       
       Use clean, modern fonts (like sans-serif).
       Use a professional color palette with dark blue/gray for headers and standard text colors.
-      Make sure to use CSS Flexbox or CSS Grid for the layout to ensure it renders correctly as a 2-column page. Do NOT use markdown, return pure valid HTML string.`;
+      Make sure to use CSS Flexbox or CSS Grid for the layout to ensure it renders correctly as a 2-column page. Do NOT use markdown, return pure valid HTML string.
+      Include a @media print block to remove any margin on the body and ensure proper printing without extra blank pages.`;
 
       const result = await model.generateContent(prompt);
-      const aiResume = result.response.text();
+      let aiResume = result.response.text();
+
+      // Clean up potential markdown formatting from AI response
+      aiResume = aiResume.replace(/```html\n?/g, '').replace(/```\n?/g, '').trim();
 
       return { success: true, resume: aiResume };
     } catch (aiError: any) {
@@ -128,6 +132,13 @@ export async function generateResume(formData: any) {
               .item-subtitle { font-size: 15px; color: #64748b; margin: 0 0 5px 0; }
               .item-date { font-size: 13px; color: #94a3b8; margin: 0 0 10px 0; }
               .item-desc { font-size: 14px; line-height: 1.6; color: #475569; margin: 0; }
+
+              @media print {
+                  body { background-color: white; margin: 0; padding: 0; }
+                  .resume-container { margin: 0; box-shadow: none; min-height: auto; width: 100%; max-width: 100%; page-break-after: auto; }
+                  .left-column, .right-column { padding: 20px; }
+                  @page { margin: 0; }
+              }
           </style>
       </head>
       <body>
