@@ -14,30 +14,33 @@ export async function generateResume(formData: any) {
 
       const workExpText = formData.workExperience?.length
         ? formData.workExperience
+            .filter((exp: any) => exp.jobTitle || exp.companyName)
             .map(
               (exp: any) =>
                 `${exp.jobTitle} at ${exp.companyName} (${exp.startDate} - ${exp.endDate}): ${exp.jobDescription}${exp.skills && exp.skills.length ? ' | Skills: ' + exp.skills.join(', ') : ''}`
             )
             .join("\n")
-        : "No work experience";
+        : "";
 
       const educationText = formData.education?.length
         ? formData.education
+            .filter((edu: any) => edu.degree || edu.institutionName)
             .map(
               (edu: any) =>
                 `${edu.degree} in ${edu.major} from ${edu.institutionName} (${edu.startDate} - ${edu.endDate})`
             )
             .join("\n")
-        : "No education";
+        : "";
 
       const certText = formData.certifications?.length
         ? formData.certifications
+            .filter((cert: any) => cert.certificationTitle || cert.issuingOrganization)
             .map(
               (cert: any) =>
                 `${cert.certificationTitle} by ${cert.issuingOrganization}`
             )
             .join("\n")
-        : "No certifications";
+        : "";
 
       const prompt = `Create a professional resume in HTML format with inline CSS for:
 
@@ -46,12 +49,12 @@ export async function generateResume(formData: any) {
       Phone: ${formData.personalInfo.phone}
       Location: ${formData.personalInfo.address}, ${formData.personalInfo.city}, ${formData.personalInfo.state}, ${formData.personalInfo.country}
       Profile Picture (Base64 URL): ${formData.personalInfo.profilePicture || ''}
-      Languages: ${formData.personalInfo.languages?.join(', ') || ''}
+      Languages: ${formData.personalInfo.languages?.length ? formData.personalInfo.languages.join(', ') : 'OMIT THIS SECTION'}
 
-      Job Title: ${formData.careerSummary.jobTitle}
-      Summary: ${formData.careerSummary.summary}
-      General Skills: ${formData.careerSummary.skills?.join(', ') || ''}
-      Co-curricular Activities / Hobbies: ${formData.careerSummary.hobbies?.join(', ') || ''}
+      Job Title: ${formData.careerSummary.jobTitle || 'OMIT THIS SECTION'}
+      Summary: ${formData.careerSummary.summary || 'OMIT THIS SECTION'}
+      General Skills: ${formData.careerSummary.skills?.length ? formData.careerSummary.skills.join(', ') : 'OMIT THIS SECTION'}
+      Co-curricular Activities / Hobbies: ${formData.careerSummary.hobbies?.length ? formData.careerSummary.hobbies.join(', ') : 'OMIT THIS SECTION'}
 
       Social/Portfolio:
       LinkedIn: ${formData.contactInfo?.linkedinProfile || ''}
@@ -59,13 +62,13 @@ export async function generateResume(formData: any) {
       Other: ${formData.contactInfo?.otherSocialMediaURL || ''}
 
       Work Experience:
-      ${workExpText}
+      ${workExpText || 'OMIT THIS SECTION'}
 
       Education:
-      ${educationText}
+      ${educationText || 'OMIT THIS SECTION'}
 
       Certifications:
-      ${certText}
+      ${certText || 'OMIT THIS SECTION'}
 
       CRITICAL LAYOUT INSTRUCTIONS:
       You MUST design the resume with a STRICT 2-COLUMN LAYOUT exactly like this:
@@ -83,6 +86,8 @@ export async function generateResume(formData: any) {
          - TRAINING / CERTIFICATION section.
          - WORK EXPERIENCE section. (IMPORTANT: For each work experience entry, you MUST include the associated Skills directly below the job description).
       
+      IMPORTANT DATA RULES: If any section (like Work Experience, Certifications, Portfolio, Skills, Languages, or Hobbies) is empty or has "No data", DO NOT include that section's heading or contents in the HTML at all.
+
       Use clean, modern fonts (like sans-serif).
       Use a professional color palette with dark blue/gray for headers and standard text colors.
       Make sure to use CSS Flexbox or CSS Grid for the layout to ensure it renders correctly as a 2-column page. Do NOT use markdown, return pure valid HTML string.
@@ -146,25 +151,33 @@ export async function generateResume(formData: any) {
               <div class="left-column">
                   ${formData.personalInfo.profilePicture ? `<div class="profile-img-container"><img src="${formData.personalInfo.profilePicture}" alt="Profile" class="profile-img"></div>` : ''}
                   
+                  ${(formData.contactInfo?.linkedinProfile || formData.contactInfo?.personalWebsite || formData.contactInfo?.otherSocialMediaURL) ? `
                   <h3 class="section-title">Portfolio</h3>
                   ${formData.contactInfo?.linkedinProfile ? `<a href="${formData.contactInfo.linkedinProfile}" class="link-item">LinkedIn</a>` : ''}
                   ${formData.contactInfo?.personalWebsite ? `<a href="${formData.contactInfo.personalWebsite}" class="link-item">Website</a>` : ''}
                   ${formData.contactInfo?.otherSocialMediaURL ? `<a href="${formData.contactInfo.otherSocialMediaURL}" class="link-item">Other</a>` : ''}
+                  ` : ''}
 
+                  ${formData.careerSummary?.skills?.length ? `
                   <h3 class="section-title">Skills</h3>
                   <ul>
-                      ${(formData.careerSummary?.skills || []).map((skill: string) => `<li>${skill}</li>`).join('')}
+                      ${formData.careerSummary.skills.map((skill: string) => `<li>${skill}</li>`).join('')}
                   </ul>
+                  ` : ''}
 
+                  ${formData.personalInfo?.languages?.length ? `
                   <h3 class="section-title">Languages</h3>
                   <ul>
-                      ${(formData.personalInfo?.languages || []).map((lang: string) => `<li>${lang}</li>`).join('')}
+                      ${formData.personalInfo.languages.map((lang: string) => `<li>${lang}</li>`).join('')}
                   </ul>
+                  ` : ''}
 
+                  ${formData.careerSummary?.hobbies?.length ? `
                   <h3 class="section-title">Co-Curricular Activities</h3>
                   <ul>
-                      ${(formData.careerSummary?.hobbies || []).map((hobby: string) => `<li>${hobby}</li>`).join('')}
+                      ${formData.careerSummary.hobbies.map((hobby: string) => `<li>${hobby}</li>`).join('')}
                   </ul>
+                  ` : ''}
               </div>
               
               <div class="right-column">
@@ -178,36 +191,44 @@ export async function generateResume(formData: any) {
                       </div>
                   </div>
 
+                  ${formData.careerSummary?.summary ? `
                   <h3 class="right-section-title">About Me</h3>
                   <p class="summary-text">${formData.careerSummary.summary}</p>
+                  ` : ''}
 
+                  ${formData.education?.filter((edu: any) => edu.degree || edu.institutionName)?.length ? `
                   <h3 class="right-section-title">Education Qualification</h3>
-                  ${formData.education?.length ? formData.education.map((edu: any) => `
+                  ${formData.education.filter((edu: any) => edu.degree || edu.institutionName).map((edu: any) => `
                       <div class="item-block">
-                          <h4 class="item-title">${edu.degree} in ${edu.major}</h4>
+                          <h4 class="item-title">${edu.degree} ${edu.major ? `in ${edu.major}` : ''}</h4>
                           <p class="item-subtitle">${edu.institutionName}</p>
-                          <p class="item-date">${edu.startDate} - ${edu.endDate}</p>
+                          <p class="item-date">${edu.startDate || ''} - ${edu.endDate || ''}</p>
                       </div>
-                  `).join('') : ''}
+                  `).join('')}
+                  ` : ''}
 
+                  ${formData.certifications?.filter((cert: any) => cert.certificationTitle || cert.issuingOrganization)?.length ? `
                   <h3 class="right-section-title">Training / Certification</h3>
-                  ${formData.certifications?.length ? formData.certifications.map((cert: any) => `
+                  ${formData.certifications.filter((cert: any) => cert.certificationTitle || cert.issuingOrganization).map((cert: any) => `
                       <div class="item-block">
                           <h4 class="item-title">${cert.certificationTitle}</h4>
                           <p class="item-subtitle">${cert.issuingOrganization}</p>
-                          <p class="item-date">${cert.issueDate} - ${cert.expiryDate}</p>
+                          <p class="item-date">${cert.issueDate || ''} - ${cert.expiryDate || ''}</p>
                       </div>
-                  `).join('') : ''}
+                  `).join('')}
+                  ` : ''}
 
+                  ${formData.workExperience?.filter((exp: any) => exp.jobTitle || exp.companyName)?.length ? `
                   <h3 class="right-section-title">Work Experience</h3>
-                  ${formData.workExperience?.length ? formData.workExperience.map((exp: any) => `
+                  ${formData.workExperience.filter((exp: any) => exp.jobTitle || exp.companyName).map((exp: any) => `
                       <div class="item-block">
-                          <h4 class="item-title">${exp.jobTitle} <span style="float:right; font-size:13px; font-weight:normal; color:#94a3b8;">${exp.startDate} - ${exp.endDate}</span></h4>
+                          <h4 class="item-title">${exp.jobTitle} <span style="float:right; font-size:13px; font-weight:normal; color:#94a3b8;">${exp.startDate || ''} - ${exp.endDate || ''}</span></h4>
                           <p class="item-subtitle">${exp.companyName}</p>
-                          <p class="item-desc">${exp.jobDescription}</p>
+                          <p class="item-desc">${exp.jobDescription || ''}</p>
                           ${exp.skills && exp.skills.length ? `<p class="item-desc" style="margin-top:5px; font-size:13px;"><strong style="color:#64748b;">Skills Used:</strong> ${exp.skills.join(', ')}</p>` : ''}
                       </div>
-                  `).join('') : ''}
+                  `).join('')}
+                  ` : ''}
               </div>
           </div>
       </body>
